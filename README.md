@@ -1,6 +1,6 @@
 ## Mesibo Python API  [ BETA ]
 
-This repo contains the source code for Mesibo Real-Time Python API. Mesibo Python library is still **under-development**. However, is completelyt functional. 
+This repo contains the source code for Mesibo Real-Time Python API. Mesibo Python library is still **under-development**. However, it is completely functional. 
 
 ### What is Mesibo?
 Mesibo offers everything to make your app real-time and scalable for your first billion users and the next. It's modular, lightweight and easy to integrate.
@@ -54,6 +54,12 @@ yum install libffi-devel python3-devel python-devel
 ```
 
 ## Basic Installation
+
+To install the pre-release via pip
+```
+pip install --upgrade mesibo
+```
+
 
 To build and install mesibo python module 
 ```
@@ -226,7 +232,7 @@ def send_text_message(to,message):
         pymesibo.send_message(msg_params,to,data,datalen)
 
 ```
-Call this function from on_status to send a message when you are online.
+For example,Call this function from on_status to send a message when you are online.
 ```python
     def on_status(self, status, sub_status, channel, p_from):
         print("===>on_status: " + str(status) + " substatus: " +
