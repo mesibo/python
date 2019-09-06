@@ -1,7 +1,7 @@
 # Mesibo for Python
 
 ## Getting started with Mesibo Python Sdk
-Mesibo Real-Time Python API is an extension module to the Mesibo C/C++ library. You can build and install Mesibo Python Module from source. The entire source code and installation details can be found at our GitHub repo  [Mesibo Python API](https://github.com/mesibo/python)
+Mesibo Python API is a completely open-source real-time library. You can build and install Mesibo Python Module from source. The entire source code and installation details can be found at our GitHub repo  [Mesibo Python API](https://github.com/mesibo/python)
 
 ## Build Requirements 
 
