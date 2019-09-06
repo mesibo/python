@@ -31,7 +31,7 @@ python setup.py build_ext --inplace
 ```
 
 If you have installed Mesibo Python Library sucessfully  you should be able to import the module in Python like so
-```
+```python
 from mesibo import Mesibo
 from mesiboNotify.mesiboNotify import mesiboNotify
 ```
