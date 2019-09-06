@@ -24,7 +24,7 @@ To build and install the Mesibo Python module
 sudo python setup.py install
 
 ```
-The files resulting from the compilation are placed in the build directory. All the files are copied from this build directory into the lib directory path of your Python installation.
+The files resulting from the compilation are placed in the build directory. All the files are automatically copied from this build directory into the lib directory path of your Python installation.
 
 To perform an in-place build that can be run from the source folder run:
 ```
