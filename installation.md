@@ -13,7 +13,7 @@ Instructions to install the Mesibo C/C++ shared library can be found [here](http
   On CentOS,Debian and derivatives (Ubuntu): python, python-dev (or python3-dev/python2-dev)
   Make sure that the Python package distutils is installed. For example,in Debian GNU/Linux, installing python-dev also      installs distutils.
 
-## Compiler(GCC 4.x (and later)are preferred)
+### Compiler(GCC 4.x (and later)are preferred)
 The Mesibo Python Module is built on C-extensions and implemented using CPython .You need to compile from source to get a shared library file which will then be used by Python.
   C/C++ compiler.GCC 4.x (and later)are recommended.
   
