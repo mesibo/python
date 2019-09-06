@@ -39,4 +39,4 @@ from mesiboNotify.mesiboNotify import mesiboNotify
 ```
 ## Next Steps
 - Refer to the Mesibo Python API usage [tutorial](https://github.com/mesibo/python)
-- Build an image recoginition chatbot by integrating Mesibo and TensorFlow!
+- Build an image recoginition chatbot by integrating Mesibo and TensorFlow! Demo available as a Jupyter Notebook [here](https://colab.research.google.com/drive/1KDASF7tCVMsmvpD1mMrD4uEo-MKiZ6DA#scrollTo=KPr32jdGYOnU)
