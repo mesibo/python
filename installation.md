@@ -37,4 +37,6 @@ If you have installed Mesibo Python Library sucessfully  you should be able to i
 from mesibo import Mesibo
 from mesiboNotify.mesiboNotify import mesiboNotify
 ```
-
+## Next Steps
+- Refer to the Mesibo Python API usage [tutorial](https://github.com/mesibo/python)
+- Build an image recoginition chatbot by integrating Mesibo and TensorFlow!
