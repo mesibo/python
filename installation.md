@@ -7,8 +7,8 @@ Mesibo Real-Time Python API is an extension module to the Mesibo C/C++ library. 
 
 ###  Mesibo C/C++ library
 Mesibo Real-Time Python API is built as an extension to the Mesibo C/C++ library. 
-Instructions to install the Mesibo C/C++ shared library can be found [here](https://mesibo.com/documentation/install/linux/#install-using-the-convenience-script) and the source files available [here](https://github.com/mesibo/libmesibo) 
-You can install Mesibo C/C++ library using a convenience-script provided by Mesibo
+Instructions to install the Mesibo C/C++ shared library can be found [here](https://mesibo.com/documentation/install/linux/#install-using-the-convenience-script). 
+You can install [Mesibo C/C++ library](https://github.com/mesibo/libmesibo) using a convenience-script provided by Mesibo
 ```
 curl -fsSL https://raw.githubusercontent.com/mesibo/libmesibo/master/install.sh | sudo bash -
 ```
