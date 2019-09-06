@@ -1,7 +1,7 @@
 # Mesibo for Python
 
 ## Getting started with Mesibo Python Sdk
-Mesibo Real-Time Python API is an extension module to the Mesibo C/C++ library. You can build and install Mesibo Python Module from source. The entire source code can be found at [Mesibo GitHub Repo](https://github.com/mesibo/python)
+Mesibo Real-Time Python API is an extension module to the Mesibo C/C++ library. You can build and install Mesibo Python Module from source. The entire source code and installation details can be found at [Mesibo GitHub Repo](https://github.com/mesibo/python)
 
 ## Build Requirements 
 
@@ -10,7 +10,7 @@ Mesibo Real-Time Python API is built as an extension to the Mesibo C/C++ library
 Instructions to install the Mesibo C/C++ shared library can be found [here](https://mesibo.com/documentation/install/linux/#install-using-the-convenience-script)
 
 ### Python 3 (3.4 or newer ) / Python 2 (2.7 or newer)
-  On CentOS,Debian and derivatives (Ubuntu): python, python-dev (or python3-dev/python2-dev)
+  Install the development packages for Python. On CentOS,Debian and derivatives (Ubuntu): python, python-dev (or python3-dev/python2-dev)
   Make sure that the Python package distutils is installed. For example,in Debian GNU/Linux, installing python-dev also      installs distutils.
 
 ### Compiler(GCC 4.x (and later)are preferred)
