@@ -16,7 +16,7 @@ curl -fsSL https://raw.githubusercontent.com/mesibo/libmesibo/master/install.sh 
 ### Python 3 (3.4 or newer ) / Python 2 (2.7 or newer)
   Install the development packages for Python. On CentOS,Debian and derivatives (Ubuntu): python, python-dev (or python3-dev/python2-dev).Make sure that the Python package distutils is installed. 
 
-### Compiler(GCC 4.x (and later)are preferred)
+### Compiler(GCC 4.x and later are preferred)
 The Mesibo Python Module is built on C-extensions and implemented using CPython .You need to compile from source to get a shared library file which will then be used by Python.
   C/C++ compiler.GCC 4.x (and later)are recommended.
   
