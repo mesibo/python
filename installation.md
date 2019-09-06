@@ -16,9 +16,9 @@ Instructions to install the Mesibo C/C++ shared library can be found [here](http
 The Mesibo Python Module is built on C-extensions and implemented using CPython .You need to compile from source to get a shared library file which will then be used by Python.
   C/C++ compiler.GCC 4.x (and later)are recommended.
   
-## Installation
+## Build and Install
 
-To build and install the Mesibo Python module
+To build and install the Mesibo Python module from source
 ```
 sudo python setup.py install
 
