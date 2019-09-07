@@ -23,6 +23,7 @@ yum install libffi-devel python3-devel python-devel
 ```
 
 **2. Mesibo C/C++ library**
+
 Mesibo Real-Time Python API is interfaced with the Mesibo C/C++ library(supported on Linux,Mac and Raspberry Pi) to perform API calls and is implemented using CPython.
 
 Instructions to install the Mesibo C/C++ shared library can be found [here](https://mesibo.com/documentation/install/linux/#install-using-the-convenience-script). 
@@ -32,6 +33,7 @@ curl -fsSL https://raw.githubusercontent.com/mesibo/libmesibo/master/install.sh 
 ```
 
 **3. Compiler(GCC 4.x and later are preferred)**
+
 The Mesibo Python Module is built on C-extensions and hence you need to compile from source files to get a shared library file which will then be loaded into Python as a module.
   C/C++ compiler.GCC 4.x (and later)are recommended.
    
