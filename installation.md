@@ -10,7 +10,7 @@ Currently the Mesibo Real-Time Python library is under-development and supports 
 
 **1. Python 3 (3.4 or newer ) / Python 2 (2.7 or newer)**
   
-  Install the development packages for Python.For example,on Linux based systems such as CentOS,Debian and derivatives (Ubuntu) the packages are `python` and `python-dev` (or python3-dev/python2-dev).
+  Install the development packages for Python. For example, on Linux based systems such as CentOS,Debian and derivatives (Ubuntu) the packages are `python` and `python-dev` (or python3-dev/python2-dev).
   
   Make sure that the Python package `distutils` is installed. 
 #### Debian/Ubuntu
@@ -34,7 +34,7 @@ curl -fsSL https://raw.githubusercontent.com/mesibo/libmesibo/master/install.sh 
 
 **3. Compiler(GCC 4.x and later are preferred)**
 
-The Mesibo Python Module is built on C-extensions and hence you need to compile from source files to get a shared library file which will then be loaded into Python as a module.
+The Mesibo Python Module is built on C-extensions and hence you need to compile from the source files to get a shared library file which will then be loaded into Python as a module.
   C/C++ compiler.GCC 4.x (and later)are recommended.
    
 
