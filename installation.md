@@ -6,7 +6,7 @@ Mesibo Python API is a completely open-source real-time library which can be bui
 ### Platforms Supported 
 Currently the Mesibo Real-Time Python library is under-development and supports Linux,Mac and Raspberry Pi.
 
-## Build Requirements 
+## Requirements 
 
 **1. Python 3 (3.4 or newer ) / Python 2 (2.7 or newer)**
   
@@ -39,7 +39,7 @@ The Mesibo Python Module is built on C-extensions and hence you need to compile 
    
 
   
-## Build and Install
+## Installing Mesibo Python Library
 
 Download the source files from [Mesibo Python API](https://github.com/mesibo/python) and ensure the following directory structure:
 ```
