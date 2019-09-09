@@ -81,14 +81,6 @@ class test_mesiboNotify(mesiboNotify):
             print("Your message has been sent!")
         return 1
 
-def send_text_message(pymesibo,to,message):
-        #pymesibo is the Mesibo Python API instance. Make sure the instance is initialised before you call API functions 
-        msg_params = {"id":pymesibo.random()}
-        data = str(message)
-        datalen = len(data)
-        pymesibo.send_message(msg_params,to,data,datalen)
-        return 1
-
 
 ```
 You need to initialise Mesibo for `TestUser1`. Enter the `AUTH TOKEN` and `APP ID`
@@ -147,7 +139,7 @@ Call this function from on_status to send a message when you are online.
               str(sub_status) + " channel:" + str(channel) + "from: " + str(p_from))
         
         if(int(status) == 1 ): #Connection is setup and you are online
-            send_text_message("TestUser2","Hello from Mesibo Python")
+            send_text_message(pymesibo,"TestUser2","Hello from Mesibo Python")
 
         return 1
 ```
@@ -163,4 +155,4 @@ Now ,you can send a message from `TestUser1` to `TestUser2`.
 python user1.py
 ```
 
-You should recieve the message "Hello from Mesibo Python" at `TestUser2` and the same should be printed out in your terminal.You can also send messages from the Mesibo console.   
+You should recieve the message "Hello from Mesibo Python" at `TestUser2` and the same should be printed out in your terminal.
