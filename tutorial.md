@@ -10,7 +10,7 @@ This is a simple tutorial for sending/recieving a text-message using the entirel
 ### Prerequisites
 Before you begin,
 - Please ensure that you have installed the Mesibo Real-Time Python Library by referring to the installation instructions [here](https://mesibo.com/documentation/install/python/)
-- Also,please go through [Get Started](https://mesibo.com/documentation/get-started/) guide to gain an understanding about Mesibo
+- Also, please go through [Get Started](https://mesibo.com/documentation/get-started/) guide to gain an understanding about Mesibo
 - Refer to [Write your First mesibo Enabled Application](https://mesibo.com/documentation/tutorials/first-app/) for information on how to create users and obtain access token
 
 Let's get Real-Time !
