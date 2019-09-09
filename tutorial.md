@@ -133,7 +133,7 @@ Call this function from on_status to send a message when you are online.
               str(sub_status) + " channel:" + str(channel) + "from: " + str(p_from))
         
         if(int(status) == 1 ): #Connection is setup and you are online
-            send_text_message("TestUser2","Hello from Mesibo Python"):
+            send_text_message("TestUser2","Hello from Mesibo Python")
 
         return 1
 ```
