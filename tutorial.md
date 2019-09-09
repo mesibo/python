@@ -137,4 +137,16 @@ Call this function from on_status to send a message when you are online.
 
         return 1
 ```
+### Run the scripts
 
+Run the files
+```
+python user2.py
+```
+Note that the Connection status for `TestUser2` is online . You can verify it from the console of your app.
+Now ,you can send a message from `TestUser1` to `TestUser2`.
+```
+python user1.py
+```
+
+You should recieve the message "Hello from Mesibo Python" at `TestUser2` and the same should be printed out in your terminal.You can also send messages from the Mesibo console.   
