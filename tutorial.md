@@ -21,7 +21,7 @@ Let's get Real-Time !
 
 - Create Users (Endpoints)
 
-Create users from the console by clicking on ‘New User’ button from the Application settings page. Create two users  named `TestUser1` and `TestUser2` and generate  access tokens for the users with your App Id.For example,the App Id could be `my_cpp_app` .
+Create users from the console by clicking on ‘New User’ button from the Application settings page. Create two users  named `TestUser1` and `TestUser2` and generate  access tokens for the users with your App Id. For example,the App Id could be `my_cpp_app` .
 
 
 Please refer to our tutorial [Write your First mesibo Enabled Application](https://mesibo.com/documentation/tutorials/first-app/) about creating users for more information.
@@ -39,8 +39,10 @@ from mesiboNotify.mesiboNotify import mesiboNotify
 ```
 
 Mesibo invokes various Listeners for various events.
-For example, when you receive a message, receive an incoming call,etc.
-mesiboNotify is a class of listeners that can be invoked to get real-time notification of events.mesiboNotify is the base class definition from which test_mesiboNotify is derived from. You can override the notify class behaviour to perform as per your requirements.  
+For example, when you receive a message, receive an incoming call,etc. 
+mesiboNotify is a class of listeners that can be invoked to get real-time notification of events. 
+
+mesiboNotify is the base class definition from which test_mesiboNotify is derived from. You can override the notify class behaviour to perform as per your requirements.  
 
 ```python
 
