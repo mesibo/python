@@ -216,7 +216,7 @@ pymesibo.set_device(1, "MyUser", APP_ID, "1.0.0")
 pymesibo.start()
 pymesibo.wait()
 
-
+```
 
 ### Run the scripts
 
