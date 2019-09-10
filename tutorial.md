@@ -53,7 +53,7 @@ pymesibo.wait()
 
 ```
 
-MeAs explained in [Anatomy of Mesibo Application](https://mesibo.com), Mesibo invokes a class of Listeners for various events. 
+As explained in [Anatomy of Mesibo Application](https://mesibo.com), Mesibo invokes a class of Listeners for various events. 
 
 Derive from the `mesiboNotify` class to implement listeners as shown below.
 
