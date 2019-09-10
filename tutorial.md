@@ -69,7 +69,7 @@ class test_mesiboNotify(mesiboNotify):
         pymesibo = mesibo_ref
     
     def on_status(self, status, sub_status, channel, p_from):
-        // You will receive the connection status here
+        #You will receive the connection status here
         
         print("===>on_status: " + str(status) + " substatus: " +
               str(sub_status) + " channel:" + str(channel) + "from: " + str(p_from))
@@ -77,7 +77,7 @@ class test_mesiboNotify(mesiboNotify):
         return 0
 
     def on_message(self, message_params_dict, p_from, data, p_len):
-        #invoked on receiving a new message or reading database messages
+        #Invoked on receiving a new message or reading database messages
         #You will receive messages here.
        
         print("You have recieved a message!")
