@@ -119,12 +119,6 @@ Enter 1000 (or anything) in `From` field, check `Create This User` checkbox, typ
 4. You will instantly receive this message in your console/terminal in `on_message` listener.
 
 
-You need to initialise Mesibo for `TestUser1`. Enter the `AUTH TOKEN` and `APP ID`
-for `TestUser1` as noted in Step-2
- 
-
-**3. Sending Messages**
-
 ## Sending Messages
 In the previous section, we have used mesibo console to send a message. Now we will quickly learn how to send messages from the code itself. To send messages, we will use `send_message` real-time API for which we will need destination user, message-id and the message itself.
 
