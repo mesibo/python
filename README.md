@@ -20,7 +20,7 @@ Mesibo's high performance C++ and Python libraries enable you to interface your 
 - Raspberry Pi
 
 ## Requirements
-Building Mesibo Python module requires the following software installed:
+Building Mesibo Python Package requires the following software installed:
 
 **1. Python 3 (3.4.x or newer preferred) / Python 2 (2.7.x or newer preferred)**
 
