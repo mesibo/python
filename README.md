@@ -60,7 +60,6 @@ You will find the following directory structure:
 To build and install the Mesibo Python Package from source
 ```
 sudo python setup.py install
-
 ```
 The entire module is built and installed automatically by copying files from the generated build folder into the lib directory path of your Python installation.
 
@@ -68,6 +67,13 @@ If you prefer not to install it automatically, you can perform an in-place build
 ```
 python setup.py build_ext --inplace
 ```
+
+Once you have installed Mesibo Python Library sucessfully, you should be able to import Mesibo module in Python as follows:
+```python
+from mesibo import Mesibo
+from mesibo import MesiboNotify
+```
+
 
 ## API Usage
 ```python
@@ -152,7 +158,7 @@ Read the  [Preparation Guide](https://mesibo.com/documentation/tutorials/first-a
 
 ### Import Mesibo and initialise it
 
-From mesibo python package import the function class `Mesibo` and the callback class `MesiboNotify`
+From `mesibo` Python Package import the function class `Mesibo` and the callback class `MesiboNotify`
 
 ```python
 from mesibo import Mesibo
