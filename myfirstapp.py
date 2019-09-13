@@ -1,5 +1,4 @@
 
-
 from mesibo import Mesibo
 from mesibo import MesiboNotify
 
@@ -41,24 +40,19 @@ def send_text_message(pymesibo,to,message):
         return 1
 
 
-AUTH_TOKEN = "baad7b35749832539002bbff9936130a42aaadd7b2cb0a3e664ef1f"
-APP_ID = "dialogflowmesibo"
+AUTH_TOKEN = "baad7b35749832539002bbff9936130a42aaadd7b2cb0a3e64ef1f"
+APP_ID = "mypythonapp"
 
 #Create Mesibo Instance
 pymesibo = Mesibo()
 pymesibo.set_listener(MesiboListener) #your custom listener class
 pymesibo.set_accesstoken(AUTH_TOKEN) #set user authentication token obtained by creating user
+pymesibo.set_appname(APP_ID) #set app id used to generate auth token
 pymesibo.set_database("mesibo.db")
-pymesibo.set_appname(APP_ID)
 pymesibo.start()
 
-try:
-    while True :
-        pass
-except KeyboardInterrupt:
+#Ensure you have created a user named TestUser from Mesibo Console before sending a message to TestUser
+send_text_message(pymesibo,"TestUser","Hello from Mesibo Python");
+
+while(1):
     pass
-
-#send_text_message(pymesibo,"Nagendra","Hi from Mesibo Python");
-
-#while(1):
- #   pass
