@@ -1,2 +1,2 @@
-from mesibo import Mesibo
-from mesibonotify import MesiboNotify
+from .mesibo import Mesibo
+from .mesibonotify import MesiboNotify
