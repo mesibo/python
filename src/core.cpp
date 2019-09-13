@@ -979,8 +979,3 @@ PyObject *mesibo_py_get_uid(PyObject *self) {
   return PyLong_FromUnsignedLong(m_api->get_uid());
 }
 
-PyObject *mesibo_py_wait(PyObject *self) {
-  DEBUG("mesibo waiting \n");
-  keypress();
-  return Py_BuildValue("i", 1);
-}

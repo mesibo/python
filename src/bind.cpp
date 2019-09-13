@@ -257,7 +257,6 @@ static PyMethodDef Mesibo_methods[] = {
     {"update_message", (PyCFunction)mesibo_py_update_message, METH_VARARGS,
      updateMessage__doc__},
 
-    {"wait", (PyCFunction)mesibo_py_wait, METH_NOARGS, wait__doc__},
 
     {NULL, NULL, 0, NULL}
 

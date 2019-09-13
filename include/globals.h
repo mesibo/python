@@ -50,9 +50,6 @@ extern int gDebugEnabled ;
     if(gDebugEnabled == 1)fprintf(stderr, format, ##__VA_ARGS__); \
   } while (0)
 
-
-int keypress();
-
 extern IMesibo* m_api;
 extern INotify* n;
 
