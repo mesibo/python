@@ -137,8 +137,6 @@ pymesibo.set_database("mesibo.db")
 #Start mesibo
 pymesibo.start() 
 
-pymesibo.wait()
-
 ```
 
 For documentation and tutorials [refer](https://mesibo.com/documentation/)
