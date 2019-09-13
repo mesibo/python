@@ -150,7 +150,7 @@ Read the  [Preparation Guide](https://mesibo.com/documentation/tutorials/first-a
 
 
 
-**1. Import mesibo API and initialise it**
+### Import Mesibo and initialise it
 
 From mesibo python package import the function class `Mesibo` and the callback class `MesiboNotify`
 
@@ -216,7 +216,7 @@ class MesiboListener(MesiboNotify):
         print(message_params)
         return 1
 ```
-## Testing your Python application
+### Testing your Python application
 
 1. Run your Python script 
 
@@ -236,7 +236,7 @@ Enter 1000 (or anything) in `From` field, check `Create This User` checkbox, typ
 4. You will instantly receive this message in your console/terminal in `on_message` listener.
 
 
-**3. Sending Messages**
+### Sending Messages
 
 To send messages,you can use `send_message` real-time API for which you will need destination user, message id and message itself.
 
