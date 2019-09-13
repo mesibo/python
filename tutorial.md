@@ -1,8 +1,13 @@
-## Tutorial on using  the Mesibo Python API
+---
+title: Write your First mesibo Enabled Application - Python
+description: Write your First mesibo Enabled Application - Python
+keywords: mesibo, android, ios, cpp, python
+---
+{% include_relative nav.html selected="python" %}
 
 In this part, we will create a simple real-time app using Python.
 
-### OS requirements
+### Supported Platforms
 - CentOS / RedHat 7.x or above
 - Debian / Ubuntu
 - Mac OS
@@ -12,102 +17,100 @@ In this part, we will create a simple real-time app using Python.
 
 You MUST go through the following prerequisites before you read further.
 
-- Installed the Mesibo Real-Time Python Library by referring to the installation instructions 
-  [here](https://mesibo.com/documentation/install/python) 
-
+- Installed the Mesibo Real-Time Python Library. If not, refer installation instructions [here](/documentation/install/python/) 
 - Read the [Preparation Guide](https://mesibo.com/documentation/tutorials/first-app/)
 
 - Read the [Anatomy of a Mesibo Application](https://mesibo.com) about using the Mesibo API and listener class
 
-- Basic knowledge of writing and runnning Python code
+- Basic knowledge of writing and running Python code
 
 
 ### First Python App
 
 Now let’s quickly start coding:
 
-From `mesibo` python package import the function class `Mesibo` and the callback class`mesiboNotify` 
+From `mesibo` python package import the function class `Mesibo` and the callback class `MesiboNotify` 
 
 ```python
-from mesibo import Mesibo 
-from mesiboNotify.mesiboNotify import mesiboNotify
+from mesibo import Mesibo
+from mesibo import MesiboNotify
 ```
 
 Now, initialize mesibo like shown below
+
 ```python
-#Create Mesibo Instance
-pymesibo = Mesibo()
+#Initialisation code
 
-pynotify = test_mesiboNotify() 
-pynotify.set_api(pymesibo)
+#Get auth token and app id from console 
+AUTH_TOKEN = "baad7b35749832539002bbff9936130a42aaadd7b2cb0a3e664eabc"
+APP_ID = "mypythonapp"
 
-#set user authentication token obtained by creating user from console
-pymesibo.set_accesstoken("aea59d3713701704bed9fd5952d9419ba8c4209a335e664ef2g")
-pymesibo.set_database("mesibo.db")
-pymesibo.set_notify(test_mesiboNotify) #your custom listener class
-pymesibo.set_device(1, "MyUser", "mypythonapp", "1.0.0")
+#Create a Mesibo Instance
+pymesibo = Mesibo() 
 
-# Initialisation complete. Start Mesibo ..
-pymesibo.start()
-pymesibo.wait()
+#Set Listener
+pymesibo.set_listener(MesiboListener)  
+
+#Set your AUTH_TOKEN obtained from the Mesibo Console
+pymesibo.set_accesstoken(AUTH_TOKEN) 
+
+#Set APP_ID which you used to create AUTH_TOKEN
+pymesibo.set_appname(APP_ID)
+
+#Set the name of the database
+pymesibo.set_database("mesibo.db") 
+
+#Start mesibo
+pymesibo.start() 
 
 ```
 
 As explained in [Anatomy of Mesibo Application](https://mesibo.com), Mesibo invokes a class of Listeners for various events. 
 
-Derive from the `mesiboNotify` class to implement listeners as shown below.
-
+Derive from the `MesiboNotify` class to implement listeners as shown below.
 
 ```python
 
-class test_mesiboNotify(mesiboNotify): 
+class MesiboListener(MesiboNotify):
 
     def __init__(self):
         pass
-    
-    def set_api(self,mesibo_ref):
-        pymesibo = mesibo_ref
-    
-    def on_status(self, status, sub_status, channel, p_from):
-        #You will receive the connection status here
-        
-        print("===>on_status: " + str(status) + " substatus: " +
-              str(sub_status) + " channel:" + str(channel) + "from: " + str(p_from))
-        
-        return 0
 
-    def on_message(self, message_params_dict, p_from, data, p_len):
-        #Invoked on receiving a new message or reading database messages
-        #You will receive messages here.
-       
-        print("You have recieved a message!")
+    def on_connectionstatus(self, status):
+        print("===>on_connectionstatus: " + str(status))
+        return 1
+
+
+    def on_message(self, message_params, p_from, data, p_len):
+        #invoked on receiving a new message or reading database messages
+        print("===>on_message: from " + str(p_from) + " of len " + str(p_len))
         print(data[:p_len])  # data buffer/Python bytes object
 
-        return 0
+        print("with message parmeters:")
+        print(message_params)
 
-    def on_messagestatus(self,  message_params_dict, p_from, last):
+        return 1
+
+    def on_messagestatus(self, message_params, p_from):
         #Invoked when the status of outgoing or sent message is changed
-        #You will receive status of sent messages here
-        
         print("===>on_messagestatus: from " +
-              str(p_from) + " " + str(last))
+              str(p_from))
         print("with message_parameters")
-        print(message_params_dict)
-
-        return 0
-
-
+        print(message_params)
+        return 1
 ```
+
 That’s it - you are now ready to receive your first real-time message.
 
-## Testing your Python application
+### Testing your Python application
+
 1. Run your Python script 
 
 ```bash
 python myfirstapp.py
 ```
 
-2. `on_status` should cycle through various status information. Finally, you should receive status=1 which indicates that your app is successfully connected to the mesibo real-time server and ready to send and receive real-time messages.
+2. `on_connectionstatus` should cycle through various status information. Finally, you should receive status=1 which indicates that your app is successfully connected to the mesibo real-time server and ready to send and receive real-time messages.
 
 3. Since we do not have any other users right now, we will use **mesibo console** to send a test message. In a later section, we will learn how to send messages from the code itself.
 
@@ -127,22 +130,13 @@ Invoke the following function anywhere from your code to send a text message.
 ```python
 def send_text_message(pymesibo,to,message):
         #pymesibo is the Mesibo Python API instance. 
-        #Make sure the instance is initialised before you call API functions 
-        msg_params = {"id":pymesibo.random()}
+        #Make sure the instance is initialised before you call API functions
+        
+        msg_params = {"id":pymesibo.random(),"expiry":3600}
         data = str(message)
         datalen = len(data)
         pymesibo.send_message(msg_params,to,data,datalen)
 
 ```
-Call this function from `on_status` to send a message when you are online.
-```python
-    def on_status(self, status, sub_status, channel, p_from):
-        print("===>on_status: " + str(status) + " substatus: " +
-              str(sub_status) + " channel:" + str(channel) + "from: " + str(p_from))
-        
-        if(int(status) == 1 ): #Connection is setup and you are online
-            send_text_message(pymesibo,"TestUser","Hello from Mesibo Python. I am Online!")
 
-        return 1
-```
 That’s it! Try it out by creating two users and send messages to each other by using the above function.
