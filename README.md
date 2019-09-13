@@ -130,7 +130,7 @@ pymesibo.set_listener(MesiboListener)
 pymesibo.set_accesstoken("your_auth_token") 
 
 #Set APP_ID which you used to create AUTH_TOKEN
-pymesibo.set_appname(APP_ID)
+pymesibo.set_appname("your_app_id")
 
 #Set the name of the database
 pymesibo.set_database("mesibo.db") 
@@ -160,8 +160,13 @@ from mesibo import MesiboNotify
 ```
 
 Now, initialize mesibo like shown below :
+
 ```python
 #Initialisation code
+
+#Get auth token and app id from console 
+AUTH_TOKEN = "baad7b35749832539002bbff9936130a42aaadd7b2cb0a3e664eabc"
+APP_ID = "mypythonapp"
 
 #Create a Mesibo Instance
 pymesibo = Mesibo() 
@@ -170,7 +175,7 @@ pymesibo = Mesibo()
 pymesibo.set_listener(MesiboListener)  
 
 #Set your AUTH_TOKEN obtained from the Mesibo Console
-pymesibo.set_accesstoken("aea59d3713701704bed9fd5952d9419ba8c4209a335e664ef2g") 
+pymesibo.set_accesstoken(AUTH_TOKEN) 
 
 #Set APP_ID which you used to create AUTH_TOKEN
 pymesibo.set_appname(APP_ID)
