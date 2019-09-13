@@ -1,6 +1,5 @@
 # Mesibo for Python
 
-## Getting started with Mesibo Python Sdk
 Mesibo Python API is a completely open-source real-time library which can be built and installed from source. The entire source code and installation details can be found at our GitHub repo  [Mesibo Python API](https://github.com/mesibo/python)
 
 ### Platforms Supported 
@@ -8,7 +7,7 @@ Currently the Mesibo Real-Time Python library is under-development and supports 
 
 ## Requirements 
 
-Mesibo Python API is an entirely open-source real-time library which can be built and installed from source. Building Mesibo Python Module requires the following software installed:
+Building Mesibo Python Module requires the following software installed:
 
 **1. Python 3 (3.4.x or newer preferred) / Python 2 (2.7.x or newer preferred)**
 
