@@ -112,8 +112,8 @@ class MesiboListener(MesiboNotify):
 def send_text_message(to,message):
         #api is the Mesibo Python API instance. Make sure the instance is initialised before you call API functions
         p = {}
-        p["peer"] = to
-        p["expiry"] = 3600
+        p['peer'] = to
+        p['expiry'] = 3600
         data = str(message)
         api.send_message(p,api.random(),data)
 
@@ -245,15 +245,13 @@ To send messages,you can use `send_message` real-time API for which you will nee
 
 Invoke the following function from your code to send a message
 ```python
-
 def send_text_message(to,message):
         #api is the Mesibo Python API instance. Make sure the instance is initialised before you call API functions
         p = {}
-        p["peer"] = to
-        p["expiry"] = 3600
+        p['peer'] = to
+        p['expiry'] = 3600
         data = str(message)
         api.send_message(p,api.random(),data)
-
 
 ```
 That’s it! Try it out by creating two users and send messages to each other by using the above function.
