@@ -122,12 +122,12 @@ Enter 1000 (or anything) in `From` field, check `Create This User` checkbox, typ
 In the previous section, we have used mesibo console to send a message. Now we will quickly learn how to send messages from the code itself. To send messages, we will use `send_message` real-time API for which we will need destination user, message-id and the message itself.
 
 Invoke the following function anywhere from your code to send a text message. 
-```
+```python
 def send_text_message(to,message):
         #api is the Mesibo Python API instance. Make sure the instance is initialised before you call API functions
         p = {}
-        p["peer"] = to
-        p["expiry"] = 3600
+        p['peer'] = to
+        p['expiry'] = 3600
         data = str(message)
         api.send_message(p,api.random(),data)
 
