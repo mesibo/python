@@ -104,7 +104,8 @@ class MesiboListener(MesiboNotify):
 
     def on_messagestatus(self, message_params):
         #Invoked when the status of outgoing or sent message is changed
-        print("===>on_messagestatus: from " + str(message_params['peer'])+ " status "+ str(message_params['status']))
+        print("===>on_messagestatus: from " + str(message_params['peer'])+ 
+        " status "+ str(message_params['status']))
         return 1
         
 
