@@ -73,18 +73,15 @@ int CNotify::on_message(tMessageParams *p, const char *from, const char *data,
 
   mesibo_py_log_param_message(p);
   PyObject *tMessageParams_dict_obj = PyDict_New();
-  mesibo_py_build_param_messagedict(tMessageParams_dict_obj, p);
+  mesibo_py_build_param_messagedict(tMessageParams_dict_obj, p, from);
+  
 
   PyObject *data_bytes_obj;
-#if PY_MAJOR_VERSION >= 3
-  data_bytes_obj = Py_BuildValue("y", data); //Python bytes object
-#else
   data_bytes_obj = Py_BuildValue("s#", data, len); // Python string buffer object
 
-#endif
   PyObject *py_return_status =
-      PyObject_CallMethod(PyNotifyClass, MESIBO_LISTENER_ON_MESSAGE, "OsOk",
-                          tMessageParams_dict_obj, from, data_bytes_obj, len);
+      PyObject_CallMethod(PyNotifyClass, MESIBO_LISTENER_ON_MESSAGE, "OO",
+                          tMessageParams_dict_obj, data_bytes_obj);
 
   int status_val = 0;
   status_val = PyLong_AsLong(py_return_status);
@@ -114,15 +111,15 @@ int CNotify::on_messagebundle(tMessageParams *p, const char *from,
 
   mesibo_py_log_param_message(p);
   PyObject *tMessageParams_dict_obj = PyDict_New();
-  mesibo_py_build_param_messagedict(tMessageParams_dict_obj, p);
+  mesibo_py_build_param_messagedict(tMessageParams_dict_obj, p, from);
 
   mesibo_py_log_param_bundle(m);
   PyObject *tMessageBundle_dict_obj = PyDict_New();
   mesibo_py_build_param_bundledict(tMessageBundle_dict_obj, m);
 
   PyObject *py_return_status = PyObject_CallMethod(
-      PyNotifyClass, MESIBO_LISTENER_ON_MESSAGE_BUNDLE, "OsO",
-      tMessageParams_dict_obj, from, tMessageBundle_dict_obj);
+      PyNotifyClass, MESIBO_LISTENER_ON_MESSAGE_BUNDLE, "OO",
+      tMessageParams_dict_obj, tMessageBundle_dict_obj);
 
   int status_val = 0;
   status_val = PyLong_AsLong(py_return_status);
@@ -143,11 +140,11 @@ int CNotify::on_messagestatus(tMessageParams *p, const char *from, int last) {
   DEBUG("with parameters from: %s last:%d \n", from, last);
 
   PyObject *tMessageParams_dict_obj = PyDict_New();
-  mesibo_py_build_param_messagedict(tMessageParams_dict_obj, p);
-
+  mesibo_py_build_param_messagedict(tMessageParams_dict_obj, p,from);
+  
   PyObject *py_return_status =
       PyObject_CallMethod(PyNotifyClass, MESIBO_LISTENER_ON_MESSAGE_STATUS,
-                          "Os", tMessageParams_dict_obj, from);
+                          "O", tMessageParams_dict_obj);
 
   int status_val = 0;
   status_val = PyLong_AsLong(py_return_status);
@@ -187,11 +184,11 @@ int CNotify::on_activity(tMessageParams *p, const char *from, uint32_t event) {
 
   PyObject *tMessageParams_dict_obj = PyDict_New();
 
-  mesibo_py_build_param_messagedict(tMessageParams_dict_obj, p);
+  mesibo_py_build_param_messagedict(tMessageParams_dict_obj, p, from);
 
   PyObject *py_return_status =
-      PyObject_CallMethod(PyNotifyClass, MESIBO_LISTENER_ON_ACTIVITY, "Osk",
-                          tMessageParams_dict_obj, from, event);
+      PyObject_CallMethod(PyNotifyClass, MESIBO_LISTENER_ON_ACTIVITY, "Ok",
+                          tMessageParams_dict_obj, event);
   int status_val = 0;
   status_val = PyLong_AsLong(py_return_status);
 
@@ -248,11 +245,11 @@ int on_location(tMessageParams *p, const char *from, float lat, float lon,
     mesibo_py_log_param_message(p);
 
     PyObject *tMessageParams_dict_obj = PyDict_New();
-    mesibo_py_build_param_messagedict(tMessageParams_dict_obj, p);
+    mesibo_py_build_param_messagedict(tMessageParams_dict_obj, p, from);
 
     PyObject *py_return_status =
-        PyObject_CallMethod(PyNotifyClass, MESIBO_LISTENER_ON_LOCATION, "Odds",
-                            tMessageParams_dict_obj, lat, lon,from);
+        PyObject_CallMethod(PyNotifyClass, MESIBO_LISTENER_ON_LOCATION, "Odd",
+                            tMessageParams_dict_obj, lat, lon);
     int status_val = 0;
     status_val = PyLong_AsLong(py_return_status);
 

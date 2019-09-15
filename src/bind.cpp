@@ -39,7 +39,6 @@
  * https://github.com/mesibo/python
  *
  */
-
 #include <Python.h>
 #include <pthread.h>
 #include <stdlib.h>

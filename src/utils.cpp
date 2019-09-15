@@ -206,9 +206,12 @@ void mesibo_py_get_param_messagedict(PyObject* py_dict, tMessageParams* p) {
 
 }
 
-void mesibo_py_build_param_messagedict(PyObject* py_dict, tMessageParams* p) {
+void mesibo_py_build_param_messagedict(PyObject* py_dict, tMessageParams* p,const char* peer) {
   PyDict_SetItem(py_dict, Py_BuildValue("s", ID),
                  PyLong_FromUnsignedLongLong(p->id));
+  
+  PyDict_SetItem(py_dict, Py_BuildValue("s",PEER),
+                 Py_BuildValue("s", (peer) ? (peer) : ""));
 
   PyDict_SetItem(py_dict, Py_BuildValue("s", REFID),
                  PyLong_FromUnsignedLongLong(p->refid));

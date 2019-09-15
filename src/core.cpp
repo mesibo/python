@@ -46,6 +46,7 @@
 #include "globals.h"
 #include "notify.h"
 #include "utils.h"
+#include <string.h>
 
 PyObject *PyNotifyClass;
 
@@ -248,11 +249,13 @@ PyObject *mesibo_py_send_message(PyObject *self, PyObject *message_args) {
   const char *data;
   int len = 0;
 
+  unsigned long long msg_id ;
+
   /* the O! parses for a Python object (DictObj) checked
  to be of type PyDict_Type --dictionary*/
 
-  if (!PyArg_ParseTuple(message_args, "O!ssi", &PyDict_Type, &p_dict_obj, &to,
-                        &data, &len)) {
+  if (!PyArg_ParseTuple(message_args, "O!Ks", &PyDict_Type, &p_dict_obj, &msg_id, 
+                        &data)) {
     PyErr_Format(PyExc_TypeError, "send_message failed,Invalid arguments");
     Py_DECREF(p_dict_obj);
     return NULL;
@@ -260,7 +263,11 @@ PyObject *mesibo_py_send_message(PyObject *self, PyObject *message_args) {
 
   tMessageParams p = {};
   mesibo_py_get_param_messagedict(p_dict_obj, &p);
+  p.id = (uint64_t)msg_id;
   mesibo_py_log_param_message(&p);
+  
+  to = mesibo_py_get_param_string(p_dict_obj, PEER);
+  len = strlen(data);
 
   DEBUG("\n\n %s  to \n", to);
   DEBUG("%s data \n", data);

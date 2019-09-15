@@ -54,6 +54,7 @@ extern IMesibo* m_api;
 extern INotify* n;
 
 #define ID "id"
+#define PEER "peer"
 #define REFID "refid"
 #define UID "uid"
 #define GROUPID "groupid"

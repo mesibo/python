@@ -58,7 +58,7 @@ char* mesibo_py_get_string(PyObject* py_string);
 void* mesibo_py_get_param_voidptr(PyObject* py_dict, const char* key);
 
 void mesibo_py_get_param_messagedict(PyObject* py_dict, tMessageParams* p);
-void mesibo_py_build_param_messagedict(PyObject* py_dict, tMessageParams* p);
+void mesibo_py_build_param_messagedict(PyObject* py_dict, tMessageParams* p,const char* peer);
 void mesibo_py_get_param_bundledict(PyObject* py_dict, tMessageBundle* m);
 void mesibo_py_build_param_bundledict(PyObject* py_dict, tMessageBundle* m);
 
