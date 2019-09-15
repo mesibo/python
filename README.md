@@ -85,6 +85,7 @@ from mesibo import MesiboNotify
 #MesiboNotify is a class of listeners that can be invoked to get real-time notification of events  
 
 
+
 class MesiboListener(MesiboNotify):
 
     def __init__(self):
@@ -95,25 +96,17 @@ class MesiboListener(MesiboNotify):
         return 1
 
 
-    def on_message(self, message_params, p_from, data, p_len):
+    def on_message(self, message_params,data):
         #invoked on receiving a new message or reading database messages
-        print("===>on_message: from " + str(p_from) + " of len " + str(p_len))
-        print(data[:p_len])  # data buffer/Python bytes object
-
-        print("with message parmeters:")
-        print(message_params)
-
+        print("===>on_message: from " + str(message_params['peer'])) 
+        print(data) 
         return 1
 
-    def on_messagestatus(self, message_params, p_from):
+    def on_messagestatus(self, message_params):
         #Invoked when the status of outgoing or sent message is changed
-        print("===>on_messagestatus: from " +
-              str(p_from))
-        print("with message_parameters")
-        print(message_params)
+        print("===>on_messagestatus: from " + str(message_params['peer'])+ " status "+ str(message_params['status']))
         return 1
         
-
 
 def send_text_message(to,message):
         #api is the Mesibo Python API instance. Make sure the instance is initialised before you call API functions
@@ -200,6 +193,7 @@ MesiboNotify is a class of listeners that can be invoked to get real-time notifi
 
 ```python
 
+
 class MesiboListener(MesiboNotify):
 
     def __init__(self):
@@ -210,23 +204,18 @@ class MesiboListener(MesiboNotify):
         return 1
 
 
-    def on_message(self, message_params, p_from, data, p_len):
+    def on_message(self, message_params,data):
         #invoked on receiving a new message or reading database messages
-        print("===>on_message: from " + str(p_from) + " of len " + str(p_len))
-        print(data[:p_len])  # data buffer/Python bytes object
-
-        print("with message parmeters:")
-        print(message_params)
-
+        print("===>on_message: from " + str(message_params['peer'])) 
+        print(data) 
         return 1
 
-    def on_messagestatus(self, message_params, p_from):
+    def on_messagestatus(self, message_params):
         #Invoked when the status of outgoing or sent message is changed
-        print("===>on_messagestatus: from " +
-              str(p_from))
-        print("with message_parameters")
-        print(message_params)
+        print("===>on_messagestatus: from " + str(message_params['peer'])+ " status "+ str(message_params['status']))
         return 1
+
+
 ```
 ### Testing your Python application
 
