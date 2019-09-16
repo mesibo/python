@@ -250,7 +250,7 @@ def send_text_message(to,message):
         p = {}
         p['peer'] = to
         p['expiry'] = 3600
-        data = str(message)
+        data = message
         api.send_message(p,api.random(),data)
 
 ```
