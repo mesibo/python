@@ -85,7 +85,6 @@ from mesibo import MesiboNotify
 #MesiboNotify is a class of listeners that can be invoked to get real-time notification of events  
 
 
-
 class MesiboListener(MesiboNotify):
 
     def __init__(self):
@@ -94,7 +93,6 @@ class MesiboListener(MesiboNotify):
     def on_connectionstatus(self, status):
         print("===>on_connectionstatus: " + str(status))
         return 1
-
 
     def on_message(self, message_params,data):
         #invoked on receiving a new message or reading database messages
@@ -110,13 +108,13 @@ class MesiboListener(MesiboNotify):
         
 
 def send_text_message(to,message):
-        #api is the Mesibo Python API instance. Make sure the instance is initialised before you call API functions
+        #api is the Mesibo Python API instance. 
+        #Make sure the instance is initialised before you call API functions
         p = {}
         p['peer'] = to
         p['expiry'] = 3600
         data = str(message)
         api.send_message(p,api.random(),data)
-
 
 
 #Initialisation code
