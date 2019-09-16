@@ -1,5 +1,45 @@
 // utils.cpp
 
+/** Copyright (c) 2019 Mesibo
+ * https://mesibo.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the terms and condition mentioned on https://mesibo.com
+ * as well as following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list
+ * of conditions, the following disclaimer and links to documentation and source code
+ * repository.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice, this
+ * list of conditions and the following disclaimer in the documentation and/or other
+ * materials provided with the distribution.
+ *
+ * Neither the name of Mesibo nor the names of its contributors may be used to endorse
+ * or promote products derived from this software without specific prior written
+ * permission.
+ *
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Documentation
+ * https://mesibo.com/documentation/
+ *
+ * Source Code Repository
+ * https://github.com/mesibo/python
+ *
+ */
+
 #define MESIBO_INT32_MAX  0x7fffffff
 #define MESIBO_INT32_MIN  0x80000001
 #define MESIBO_UINT8_MAX  0xff
@@ -7,6 +47,21 @@
 #define MESIBO_UINT32_MAX 0xffffffff
 #define MESIBO_UINT64_MAX 0xffffffffffffffff
 
+/* A list of valid values returned by mesibo_py_get_cpu_family().
+ * They describe the CPU Architecture of the current process.
+ */
+typedef enum {
+    MESIBO_CPU_FAMILY_UNKNOWN = 0,
+    MESIBO_CPU_FAMILY_ARM,
+    MESIBO_CPU_FAMILY_X86,
+    MESIBO_CPU_FAMILY_MIPS,
+    MESIBO_CPU_FAMILY_ARM64,
+    MESIBO_CPU_FAMILY_X86_64,
+    MESIBO_CPU_FAMILY_MIPS64,
+    MESIBO_CPU_FAMILY_MAX  /* do not remove */
+} mesibo_cpu_family;
+
+#define MESIBO_DEFAULT_EXPIRY 604800
 
 #include "utils.h"
 #include <Python.h>
@@ -149,7 +204,11 @@ void mesibo_py_get_param_messagedict(PyObject* py_dict, tMessageParams* p) {
   p->refid         = mesibo_py_get_param_ui64(py_dict, REFID);
   p->uid           = mesibo_py_get_param_ui32(py_dict, UID);
   p->groupid       = mesibo_py_get_param_ui32(py_dict, GROUPID);
-  p->expiry        = mesibo_py_get_param_i32(py_dict, EXPIRY);
+  
+  if (PyDict_Contains(py_dict, Py_BuildValue("s",EXPIRY)) == 0) //No expiry provided
+	  p->expiry = MESIBO_DEFAULT_EXPIRY ;
+  else
+	  p->expiry        = mesibo_py_get_param_i32(py_dict, EXPIRY);
   p->flag          = mesibo_py_get_param_ui32(py_dict, FLAG);
   p->when          = mesibo_py_get_param_ui64(py_dict, WHEN);
   p->retaints      = mesibo_py_get_param_ui64(py_dict, RETAINTS);
@@ -166,9 +225,12 @@ void mesibo_py_get_param_messagedict(PyObject* py_dict, tMessageParams* p) {
 
 }
 
-void mesibo_py_build_param_messagedict(PyObject* py_dict, tMessageParams* p) {
+void mesibo_py_build_param_messagedict(PyObject* py_dict, tMessageParams* p,const char* peer) {
   PyDict_SetItem(py_dict, Py_BuildValue("s", ID),
                  PyLong_FromUnsignedLongLong(p->id));
+  
+  PyDict_SetItem(py_dict, Py_BuildValue("s",PEER),
+                 Py_BuildValue("s", (peer) ? (peer) : ""));
 
   PyDict_SetItem(py_dict, Py_BuildValue("s", REFID),
                  PyLong_FromUnsignedLongLong(p->refid));
@@ -363,4 +425,41 @@ PyObject* mesibo_py_get_callableclass(PyObject* py_class) {
                  mesibo_py_get_string(PyObject_Repr(py_class)));
     return NULL;
   }
+}
+
+int mesibo_py_get_cpu_family(const char * family_name){
+
+mesibo_cpu_family cpu_family;
+
+if(strncmp(family_name,"x86_64",6) == 0)
+  cpu_family = MESIBO_CPU_FAMILY_X86_64;
+else if(strncmp(family_name,"x86",3) == 0)
+  cpu_family = MESIBO_CPU_FAMILY_X86;
+
+else if (strncmp(family_name,"armv7",5) <= 0) //ARM7 or Lower are 32 bit
+  cpu_family = MESIBO_CPU_FAMILY_ARM;
+
+else if(strncmp(family_name,"armv8",5) >= 0) //ARM8 or Above are 64 bit
+  cpu_family = MESIBO_CPU_FAMILY_ARM64;
+else
+  cpu_family = MESIBO_CPU_FAMILY_UNKNOWN;
+
+
+return int(cpu_family);
+}
+
+
+void mesibo_py_set_cpu_info(IMesibo* m_api){
+  PyObject *platform_module = PyImport_ImportModule("platform");
+  PyObject *machine_name =
+      PyObject_CallMethod(platform_module, "machine", NULL);
+
+  PyObject* multiproc_module = PyImport_ImportModule("multiprocessing");
+  PyObject* num_cores = 
+      PyObject_CallMethod(multiproc_module,"cpu_count", NULL);
+
+  int family = mesibo_py_get_cpu_family(mesibo_py_get_string(machine_name));
+  int count  = PyLong_AsLong(num_cores);
+  DEBUG("family %d count %d \n", family, count);
+  m_api->set_cpu(family, 0, count);
 }

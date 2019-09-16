@@ -1,11 +1,58 @@
 // api.cpp
 
+/** Copyright (c) 2019 Mesibo
+ * https://mesibo.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the terms and condition mentioned
+ * on https://mesibo.com as well as following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions, the following disclaimer and links to documentation and
+ * source code repository.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of Mesibo nor the names of its contributors may be used to
+ * endorse or promote products derived from this software without specific prior
+ * written permission.
+ *
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Documentation
+ * https://mesibo.com/documentation/
+ *
+ * Source Code Repository
+ * https://github.com/mesibo/python
+ *
+ */
+
 #include "core.h"
 #include <Python.h>
 #include <mesibo.h>
+#include <stdlib.h>
+#include <string.h>
 #include "globals.h"
 #include "notify.h"
 #include "utils.h"
+
+#define DEVICE_PYTHON 4
+#define MESIBO_PYTHON_DEVICE "python"
+#define MESIBO_PYTHON_VERSION "0.0.3"
 
 PyObject *PyNotifyClass;
 
@@ -16,6 +63,9 @@ void mesibo_py_init() {
   m_api = query_mesibo("/tmp");
   n->set_api(m_api);
   m_api->set_notify(0, n, 1);
+
+  mesibo_py_set_cpu_info(m_api);
+
 }
 
 PyObject *mesibo_py_start(PyObject *self) {
@@ -74,41 +124,24 @@ PyObject *mesibo_py_set_uniqid(PyObject *self, PyObject *uniqid_obj) {
   Py_RETURN_NONE;
 }
 
-PyObject *mesibo_py_set_device(PyObject *self, PyObject *device_args) {
-  DEBUG("===>mesibo_set_device called\n");
-  unsigned char type;
-  const char *deviceid;
+PyObject *mesibo_py_set_appname(PyObject *self, PyObject *app_id) {
+  DEBUG("===>mesibo_set_appname called\n");
+  unsigned char type = DEVICE_PYTHON;
+  const char *deviceid = MESIBO_PYTHON_DEVICE;  // Get python info
   const char *package;
-  const char *version;
+  const char *version = MESIBO_PYTHON_VERSION;
 
-  if (!PyArg_ParseTuple(device_args, "bsss", &type, &deviceid, &package,
-                        &version)) {
-    PyErr_Format(PyExc_TypeError, "set_device failed,Invalid arguments");
+  if (!PyArg_ParseTuple(app_id, "s", &package)) {
+    PyErr_Format(PyExc_TypeError, "set_appname failed,Invalid arguments");
     return NULL;
   }
 
   DEBUG(" type %d, deviceid %s, package %s, version %s \n\n", type, deviceid,
         package, version);
+  DEBUG("%d", DEVICE_PYTHON);
 
   int return_val = m_api->set_device((uint8_t)type, deviceid, package, version);
   return Py_BuildValue("i", return_val);
-}
-
-PyObject *mesibo_py_set_cpu(PyObject *self, PyObject *cpu_args) {
-  DEBUG("===>mesibo_set_cpu called \n");
-  unsigned long long features;
-  int family, count;
-
-  if (!PyArg_ParseTuple(cpu_args, "iKi", &family, &features, &count)) {
-    PyErr_Format(PyExc_TypeError, "set_cpu failed,Invalid arguments");
-    return NULL;
-  }
-
-  DEBUG("family %d features %" PRIu64 " count %d \n", family,
-        (uint64_t)features, count);
-  m_api->set_cpu(family, (uint64_t)features, count);
-
-  return Py_BuildValue("i", 0);
 }
 
 PyObject *mesibo_py_set_accesstoken(PyObject *self, PyObject *PyAppToken) {
@@ -127,7 +160,7 @@ PyObject *mesibo_py_set_accesstoken(PyObject *self, PyObject *PyAppToken) {
 
 PyObject *mesibo_py_set_notify(PyObject *self, PyObject *notify_class_ref) {
   DEBUG("===>mesibo_set_notify called \n");
-  
+
   if (!PyArg_ParseTuple(notify_class_ref, "O", &PyNotifyClass)) {
     PyErr_Format(PyExc_TypeError, "set_notify failed,Invalid arguments");
     return NULL;
@@ -147,21 +180,6 @@ PyObject *mesibo_py_set_notify(PyObject *self, PyObject *notify_class_ref) {
     return NULL;
   }
 
-  Py_RETURN_NONE;
-}
-
-PyObject *mesibo_py_set_appstore(PyObject *self, PyObject *appstore_args) {
-  DEBUG("===>mesibo_set_appstore called \n");
-
-  int storeid;
-  const char *store;
-  if (!PyArg_ParseTuple(appstore_args, "is", &storeid, &store)) {
-    PyErr_Format(PyExc_RuntimeError, "set_appstore failed,Invalid arguments");
-    return NULL;
-  }
-
-  DEBUG("storeid: %d ,store: %s\n", storeid, store);
-  m_api->set_appstore(storeid, store);
   Py_RETURN_NONE;
 }
 
@@ -206,22 +224,64 @@ PyObject *mesibo_py_send_message(PyObject *self, PyObject *message_args) {
 
   PyObject *p_dict_obj;
   const char *to;
-  const char *data;
+  const char *data = "";
   int len = 0;
+
+  unsigned long long msg_id;
+  PyObject *data_obj;
+  char *string_data ;
 
   /* the O! parses for a Python object (DictObj) checked
  to be of type PyDict_Type --dictionary*/
 
-  if (!PyArg_ParseTuple(message_args, "O!ssi", &PyDict_Type, &p_dict_obj, &to,
-                        &data, &len)) {
+  if (!PyArg_ParseTuple(message_args, "O!KO", &PyDict_Type, &p_dict_obj,
+                        &msg_id, &data_obj)) {
     PyErr_Format(PyExc_TypeError, "send_message failed,Invalid arguments");
     Py_DECREF(p_dict_obj);
     return NULL;
   }
 
+// Overloaded functions for bytes,string and integer
+#if PY_MAJOR_VERSION >= 3  // For Python3
+  if (PyBytes_Check(data_obj)) { //Byte object class exist in Python3
+    data = PyBytes_AsString(data_obj);
+    len = PyBytes_Size(data_obj) + 1;
+  }
+
+  else if (PyLong_Check(data_obj)) {
+    long long int int_data = PyLong_AsLongLong(data_obj);
+    string_data = (char*) malloc((long long int)((ceil(log10(int_data))+1)));
+    sprintf(string_data, "%lld", int_data);
+    data = (const char *)string_data;
+    len = strlen(data);
+  }
+
+  else {
+    data = mesibo_py_get_string(data_obj);
+    len = strlen(data);
+  }
+
+#else  // For Python 2
+  if (PyLong_Check(data_obj)) {
+    long long int int_data = PyLong_AsLongLong(data_obj);
+    string_data = (char*) malloc((long long int)((ceil(log10(int_data))+1)));
+    sprintf(string_data, "%lld", int_data);
+    data = (const char *)string_data;
+    len = strlen(data);
+  } 
+  else if (PyString_Check(data_obj))
+    data = mesibo_py_get_string(data_obj);
+
+  len = strlen(data);
+#endif
+
+
   tMessageParams p = {};
   mesibo_py_get_param_messagedict(p_dict_obj, &p);
+  p.id = (uint64_t)msg_id;
   mesibo_py_log_param_message(&p);
+
+  to = mesibo_py_get_param_string(p_dict_obj, PEER);
 
   DEBUG("\n\n %s  to \n", to);
   DEBUG("%s data \n", data);
@@ -341,7 +401,8 @@ PyObject *mesibo_py_set_readsession(PyObject *self, PyObject *session_args) {
 
   if (!PyArg_ParseTuple(session_args, "Oksks", &data_obj, &flag, &from,
                         &groupid, &searchquery)) {
-    PyErr_Format(PyExc_TypeError, "set_reading_session failed,Invalid arguments");
+    PyErr_Format(PyExc_TypeError,
+                 "set_reading_session failed,Invalid arguments");
     Py_DECREF(data_obj);
     return NULL;
   }
@@ -874,7 +935,8 @@ PyObject *mesibo_py_set_callprocessing(PyObject *self, PyObject *args) {
 
   if (!PyArg_ParseTuple(args, "ii", &call_reject_status,
                         &current_call_status)) {
-    PyErr_Format(PyExc_TypeError, "set_callprocessing failed,Invalid arguments");
+    PyErr_Format(PyExc_TypeError,
+                 "set_callprocessing failed,Invalid arguments");
     return NULL;
   }
 
@@ -938,10 +1000,4 @@ PyObject *mesibo_py_callstatus_from_proxyrtc(PyObject *self, PyObject *args) {
 
 PyObject *mesibo_py_get_uid(PyObject *self) {
   return PyLong_FromUnsignedLong(m_api->get_uid());
-}
-
-PyObject *mesibo_py_wait(PyObject *self) {
-  DEBUG("mesibo waiting \n");
-  keypress();
-  return Py_BuildValue("i", 1);
 }

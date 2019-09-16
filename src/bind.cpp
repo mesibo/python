@@ -1,5 +1,44 @@
 // bind.cpp
 
+/** Copyright (c) 2019 Mesibo
+ * https://mesibo.com
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the terms and condition mentioned on https://mesibo.com
+ * as well as following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list
+ * of conditions, the following disclaimer and links to documentation and source code
+ * repository.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice, this
+ * list of conditions and the following disclaimer in the documentation and/or other
+ * materials provided with the distribution.
+ *
+ * Neither the name of Mesibo nor the names of its contributors may be used to endorse
+ * or promote products derived from this software without specific prior written
+ * permission.
+ *
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Documentation
+ * https://mesibo.com/documentation/
+ *
+ * Source Code Repository
+ * https://github.com/mesibo/python
+ *
+ */
 #include <Python.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -160,8 +199,6 @@ static PyMethodDef Mesibo_methods[] = {
     {"set_answer_mode", (PyCFunction)mesibo_py_set_answer_mode, METH_VARARGS,
      setAnswerMode__doc__},
 
-    {"set_appstore", (PyCFunction)mesibo_py_set_appstore, METH_VARARGS,
-     setAppstore__doc__},
 
     {"set_bufferlen", (PyCFunction)mesibo_py_set_bufferlen, METH_VARARGS,
      setBufferLen__doc__},
@@ -172,7 +209,6 @@ static PyMethodDef Mesibo_methods[] = {
     {"set_callprocessing", (PyCFunction)mesibo_py_set_callprocessing,
      METH_VARARGS, setCallProcessing__doc__},
 
-    {"set_cpu", (PyCFunction)mesibo_py_set_cpu, METH_VARARGS, setCpu__doc__},
 
     {"set_accesstoken", (PyCFunction)mesibo_py_set_accesstoken,
      METH_VARARGS | METH_KEYWORDS, setAccessToken__doc__},
@@ -183,15 +219,15 @@ static PyMethodDef Mesibo_methods[] = {
     {"set_debug", (PyCFunction)mesibo_py_set_debug, METH_VARARGS,
      setDebug__doc__},
 
-    {"set_device", (PyCFunction)mesibo_py_set_device, METH_VARARGS,
-     setDevice__doc__},
+    {"set_appname", (PyCFunction)mesibo_py_set_appname, METH_VARARGS,
+     setAppName__doc__},
 
     {"set_key", (PyCFunction)mesibo_py_set_key, METH_VARARGS, setKey__doc__},
 
     {"set_network", (PyCFunction)mesibo_py_set_network, METH_VARARGS,
      setNetwork__doc__},
 
-    {"set_notify", (PyCFunction)mesibo_py_set_notify, METH_VARARGS,
+    {"set_listener", (PyCFunction)mesibo_py_set_notify, METH_VARARGS,
      setNotify__doc__},
 
     {"set_pstn", (PyCFunction)mesibo_py_set_pstn, METH_VARARGS, setPstn__doc__},
@@ -217,7 +253,6 @@ static PyMethodDef Mesibo_methods[] = {
     {"update_message", (PyCFunction)mesibo_py_update_message, METH_VARARGS,
      updateMessage__doc__},
 
-    {"wait", (PyCFunction)mesibo_py_wait, METH_NOARGS, wait__doc__},
 
     {NULL, NULL, 0, NULL}
 
