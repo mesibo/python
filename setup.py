@@ -1,8 +1,8 @@
-from distutils.core import setup,Extension
+from setuptools import setup,Extension
 import os
 
 #Install Mesibo C/C++ library
-os.system("curl -fsSL https://raw.githubusercontent.com/Nagendra1997/libmesibo/master/install.sh | sudo bash -")
+os.system("curl -fsSL https://raw.githubusercontent.com/mesibo/libmesibo/master/install.sh | sudo bash -")
 
 module=Extension("mesibo.mesibo",
         sources=["src/bind.cpp","src/notify.cpp","src/core.cpp","src/globals.cpp","src/utils.cpp"],
@@ -19,7 +19,7 @@ setup( name="mesibo",
         'Natural Language :: English',
         'Programming Language :: Python :: 3 :: 2',
         'Programming Language :: Python :: Implementation :: CPython',
-        "Operating System :: Linux"
+        "Operating System :: Unix"
         ],
         description="Mesibo Real-Time Python Library. Documentation: https://mesibo.com/documentation/",
         ext_modules=[module],

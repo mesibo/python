@@ -64,7 +64,7 @@ class MesiboNotify:
         return 1
 
 
-    def on_message(self, message_params, data ):
+    def on_message(self, message_params, data , datalen):
         """
         Invoked on receiving a new message or reading database messages 
         

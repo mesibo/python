@@ -47,6 +47,7 @@
 #include "notify.h"
 #include "utils.h"
 #include <string.h>
+#include <stdlib.h>
 
 PyObject *PyNotifyClass;
 
@@ -246,20 +247,56 @@ PyObject *mesibo_py_send_message(PyObject *self, PyObject *message_args) {
 
   PyObject *p_dict_obj;
   const char *to;
-  const char *data;
+  const char *data = "";
   int len = 0;
 
   unsigned long long msg_id ;
+  PyObject *data_obj;
+  char * string_data;
 
   /* the O! parses for a Python object (DictObj) checked
  to be of type PyDict_Type --dictionary*/
 
-  if (!PyArg_ParseTuple(message_args, "O!Ks", &PyDict_Type, &p_dict_obj, &msg_id, 
-                        &data)) {
+  if (!PyArg_ParseTuple(message_args, "O!KO", &PyDict_Type, &p_dict_obj, &msg_id, 
+                        &data_obj)) {
     PyErr_Format(PyExc_TypeError, "send_message failed,Invalid arguments");
     Py_DECREF(p_dict_obj);
     return NULL;
   }
+
+  //Overloaded functions for bytes,string and integer
+  #if PY_MAJOR_VERSION >= 3 //For Python3
+  if(PyBytes_Check(data_obj)){
+      data = PyBytes_AsString(data_obj);
+      DEBUG("%s Bytes data \n", data);
+      len = PyBytes_Size(data_obj) + 1;
+    }
+
+  else if(PyLong_Check(data_obj)){
+      sprintf(string_data, "%llu", PyLong_AsUnsignedLongLong(data_obj));
+      data = (const char * )string_data;
+      len = strlen(data);
+    }
+
+  else {
+      data = mesibo_py_get_string(data_obj);
+      len = strlen(data);
+
+    }
+
+  
+
+  #else     //For Python 2
+  if(PyLong_Check(data_obj)){
+      sprintf(string_data, "%llu", PyLong_AsUnsignedLongLong(data_obj));
+      data = (const char * )string_data;
+    }
+  else if(PyString_Check(data_obj))
+      data = mesibo_py_get_string(data_obj);
+  
+  len = strlen(data);
+  #endif
+
 
   tMessageParams p = {};
   mesibo_py_get_param_messagedict(p_dict_obj, &p);
@@ -267,7 +304,6 @@ PyObject *mesibo_py_send_message(PyObject *self, PyObject *message_args) {
   mesibo_py_log_param_message(&p);
   
   to = mesibo_py_get_param_string(p_dict_obj, PEER);
-  len = strlen(data);
 
   DEBUG("\n\n %s  to \n", to);
   DEBUG("%s data \n", data);

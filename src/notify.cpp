@@ -77,11 +77,17 @@ int CNotify::on_message(tMessageParams *p, const char *from, const char *data,
   
 
   PyObject *data_bytes_obj;
+  #if PY_MAJOR_VERSION >= 3
+  data_bytes_obj = Py_BuildValue("y", data);
+  #else
   data_bytes_obj = Py_BuildValue("s#", data, len); // Python string buffer object
 
+  #endif
+  
+
   PyObject *py_return_status =
-      PyObject_CallMethod(PyNotifyClass, MESIBO_LISTENER_ON_MESSAGE, "OO",
-                          tMessageParams_dict_obj, data_bytes_obj);
+      PyObject_CallMethod(PyNotifyClass, MESIBO_LISTENER_ON_MESSAGE, "OOk",
+                          tMessageParams_dict_obj, data_bytes_obj,len);
 
   int status_val = 0;
   status_val = PyLong_AsLong(py_return_status);

@@ -46,6 +46,6 @@
 #include <mesibo.h>
 
 // To build a debug version of mesibo set gDebugEnabled  
-int gDebugEnabled = 0;
+int gDebugEnabled = 1;
 
 IMesibo* m_api = NULL;
