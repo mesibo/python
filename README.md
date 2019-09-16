@@ -85,6 +85,7 @@ from mesibo import MesiboNotify
 #MesiboNotify is a class of listeners that can be invoked to get real-time notification of events  
 
 
+
 class MesiboListener(MesiboNotify):
 
     def __init__(self):
@@ -95,33 +96,27 @@ class MesiboListener(MesiboNotify):
         return 1
 
 
-    def on_message(self, message_params, p_from, data, p_len):
+    def on_message(self, message_params,data):
         #invoked on receiving a new message or reading database messages
-        print("===>on_message: from " + str(p_from) + " of len " + str(p_len))
-        print(data[:p_len])  # data buffer/Python bytes object
-
-        print("with message parmeters:")
-        print(message_params)
-
+        print("===>on_message: from " + str(message_params['peer'])) 
+        print(data) 
         return 1
 
-    def on_messagestatus(self, message_params, p_from):
+    def on_messagestatus(self, message_params):
         #Invoked when the status of outgoing or sent message is changed
-        print("===>on_messagestatus: from " +
-              str(p_from))
-        print("with message_parameters")
-        print(message_params)
+        print("===>on_messagestatus: from " + str(message_params['peer'])+ 
+        " status "+ str(message_params['status']))
         return 1
         
 
-def send_text_message(pymesibo,to,message):
-        #pymesibo is the Mesibo Python API instance.
-        #Make sure the instance is initialised before you call API functions 
-        msg_params = {"id":pymesibo.random(),"expiry":3600}
+def send_text_message(to,message):
+        #api is the Mesibo Python API instance. Make sure the instance is initialised before you call API functions
+        p = {}
+        p['peer'] = to
+        p['expiry'] = 3600
         data = str(message)
-        datalen = len(data)
-        pymesibo.send_message(msg_params,to,data,datalen)
-        return 1
+        api.send_message(p,api.random(),data)
+
 
 
 #Initialisation code
@@ -199,6 +194,7 @@ MesiboNotify is a class of listeners that can be invoked to get real-time notifi
 
 ```python
 
+
 class MesiboListener(MesiboNotify):
 
     def __init__(self):
@@ -209,23 +205,19 @@ class MesiboListener(MesiboNotify):
         return 1
 
 
-    def on_message(self, message_params, p_from, data, p_len):
+    def on_message(self, message_params,data):
         #invoked on receiving a new message or reading database messages
-        print("===>on_message: from " + str(p_from) + " of len " + str(p_len))
-        print(data[:p_len])  # data buffer/Python bytes object
-
-        print("with message parmeters:")
-        print(message_params)
-
+        print("===>on_message: from " + str(message_params['peer'])) 
+        print(data) 
         return 1
 
-    def on_messagestatus(self, message_params, p_from):
+    def on_messagestatus(self, message_params):
         #Invoked when the status of outgoing or sent message is changed
-        print("===>on_messagestatus: from " +
-              str(p_from))
-        print("with message_parameters")
-        print(message_params)
+        print("===>on_messagestatus: from " + str(message_params['peer'])+ 
+        " status "+ str(message_params['status']))
         return 1
+
+
 ```
 ### Testing your Python application
 
@@ -253,14 +245,13 @@ To send messages,you can use `send_message` real-time API for which you will nee
 
 Invoke the following function from your code to send a message
 ```python
-def send_text_message(pymesibo,to,message):
-        #pymesibo is the Mesibo Python API instance. 
-        #Make sure the instance is initialised before you call API functions
-        
-        msg_params = {"id":pymesibo.random(),"expiry":3600}
+def send_text_message(to,message):
+        #api is the Mesibo Python API instance. Make sure the instance is initialised before you call API functions
+        p = {}
+        p['peer'] = to
+        p['expiry'] = 3600
         data = str(message)
-        datalen = len(data)
-        pymesibo.send_message(msg_params,to,data,datalen)
+        api.send_message(p,api.random(),data)
 
 ```
 That’s it! Try it out by creating two users and send messages to each other by using the above function.
