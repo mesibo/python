@@ -29,11 +29,9 @@ class MesiboListener(MesiboNotify):
 
 
 
-#AUTH_TOKEN = "9f079c04b6bdb9d7253be331240f2d33780e97bbe4387e8e557933c"
-#APP_ID = "myfirstapp"
+AUTH_TOKEN = "9f079c04b6bdb9d7253be331240f2d33780e97bbe4387e8e557933c"
+APP_ID = "myfirstapp"
 
-AUTH_TOKEN = "3e7694e19d192588a4ffcb4eab26b6afb3d5aada54bbd41edd71400"
-APP_ID = "dialogflowmesibo"
 
 #Create Mesibo Instance
 api = Mesibo()
@@ -52,8 +50,9 @@ def send_text_message(to,message):
         api.send_message(p,api.random(),data)
 
 api.start()
-#print(bytes(3))
-send_text_message("Ankit","Hello from Mesibo Python")
+
+#Create a user TestUser before you send a message
+send_text_message("TestUser","Hello from Mesibo Python")
 
 try:
     while True:
@@ -61,8 +60,6 @@ try:
 except KeyboardInterrupt:
     pass
 
-#while(1):
- #   pass
 
 
 
