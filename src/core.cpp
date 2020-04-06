@@ -41,8 +41,8 @@
  *
  */
 
-#include "core.h"
 #include <Python.h>
+#include "core.h"
 #include <mesibo.h>
 #include <stdlib.h>
 #include <string.h>

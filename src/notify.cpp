@@ -47,11 +47,11 @@
 #define MESIBO_LISTENER_ON_ACTIVITY "on_activity"
 #define MESIBO_LISTENER_ON_LOCATION "on_location"
 
-#include "notify.h"
-#include <inttypes.h>
 #include <Python.h>
+#include <inttypes.h>
 #include <assert.h>
 #include <mesibo.h>
+#include "notify.h"
 #include "globals.h"
 #include "utils.h"
 
@@ -137,7 +137,7 @@ int CNotify::on_messagebundle(tMessageParams *p, const char *from,
 }
 
 int CNotify::on_messagestatus(tMessageParams *p, const char *from, int last) {
-  DEBUG("===> on_messagestatus status %u id %u when %u ms (%u %u) from: %s\n",
+  DEBUG("===> on_messagestatus status %u id %" PRIu64 " when %" PRIu64 "ms (%" PRIu64 " %" PRIu64 ") from: %s\n",
         p->status, p->id, m_api->timestamp() - p->when, m_api->timestamp(),
         p->when, from ? from : "");
 
@@ -208,7 +208,7 @@ int CNotify::on_activity(tMessageParams *p, const char *from, uint32_t event) {
 
 int CNotify::on_call(uint32_t peerid, uint32_t callid, int status,
                      const char *data, int datalen, uint64_t flags) {
-  DEBUG("===> on_call: %s status 0x%x flags 0x%x\n", data, status, flags);
+  DEBUG("===> on_call: %s status 0x%x flags 0x%x\n", data, status, (unsigned int)flags);
 
   return 0;
 

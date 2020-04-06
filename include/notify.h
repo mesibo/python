@@ -42,8 +42,8 @@
 
 #pragma once
 
-#include <mesibo.h>
 #include <Python.h>
+#include <mesibo.h>
 
 extern PyObject * PyNotifyClass;
 

@@ -40,8 +40,8 @@
  *
  */
 
-#include "globals.h"
 #include <Python.h>
+#include "globals.h"
 #include <mesibo.h>
 
 // To build a debug version of mesibo set gDebugEnabled  
