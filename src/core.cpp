@@ -54,6 +54,9 @@
 #define MESIBO_PYTHON_DEVICE "python"
 #define MESIBO_PYTHON_VERSION "0.0.3"
 
+#define MESIBO_PYTHON_RESULT_OK 0
+#define MESIBO_PYTHON_RESULT_FAIL -1
+
 PyObject *PyNotifyClass;
 
 void mesibo_py_init() {
@@ -70,14 +73,14 @@ void mesibo_py_init() {
 
 PyObject *mesibo_py_start(PyObject *self) {
   DEBUG("===>mesibo_start called\n");
-  m_api->start();
-  return Py_BuildValue("i", 1);
+  int rv = m_api->start();
+  return Py_BuildValue("i", rv);
 }
 
 PyObject *mesibo_py_stop(PyObject *self) {
   DEBUG("===>mesibo_stop called\n");
-  m_api->stop();
-  return Py_BuildValue("i", 1);
+  int rv = m_api->stop();
+  return Py_BuildValue("i", rv);
 }
 
 PyObject *mesibo_py_reconnect_now(PyObject *self, PyObject *type_arg) {
@@ -1000,4 +1003,10 @@ PyObject *mesibo_py_callstatus_from_proxyrtc(PyObject *self, PyObject *args) {
 
 PyObject *mesibo_py_get_uid(PyObject *self) {
   return PyLong_FromUnsignedLong(m_api->get_uid());
+}
+
+PyObject *mesibo_py_wait(PyObject *self) {
+  DEBUG("mesibo waiting \n");
+  int rv= m_api->wait();
+  return Py_BuildValue("i", rv);
 }

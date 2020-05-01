@@ -87,7 +87,7 @@ int CNotify::on_message(tMessageParams *p, const char *from, const char *data,
 
   PyObject *py_return_status =
       PyObject_CallMethod(PyNotifyClass, MESIBO_LISTENER_ON_MESSAGE, "OOk",
-                          tMessageParams_dict_obj, data_bytes_obj,len);
+                          tMessageParams_dict_obj, data_bytes_obj, len);
 
   int status_val = 0;
   status_val = PyLong_AsLong(py_return_status);

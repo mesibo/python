@@ -115,4 +115,4 @@ PyObject *mesibo_py_set_callfactory(PyObject *self, PyObject *args);
 PyObject *mesibo_py_callstatus_from_proxyrtc(PyObject *self, PyObject *args);
 PyObject *mesibo_py_get_uid(PyObject *self);
 
-
+PyObject *mesibo_py_wait(PyObject *self);

@@ -383,3 +383,7 @@ PyDoc_STRVAR(timestamp__doc__,
 PyDoc_STRVAR(updateMessage__doc__,
              "update_message(id,flag,status,thumbnail,tnlen,filepath)->int \n\n"
              "Update Message");
+PyDoc_STRVAR(wait__doc__,
+             "wait()->int\n\n"
+             "Parameters: Void \n\n"
+             "Wait on Mesibo. Must be called after start()");
