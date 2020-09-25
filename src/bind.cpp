@@ -272,7 +272,15 @@ static PyTypeObject mesibo_MesiboType = {
     .tp_basicsize = sizeof(Mesibo),
     .tp_itemsize = 0,
     .tp_dealloc = (destructor)Mesibo_dealloc,
+    //Changed in version 3.8: 
+    //This slot was used for print formatting in Python 2.x. 
+    //In Python 3.0 to 3.7, it was reserved and named tp_print.
+    //https://docs.python.org/3.8/c-api/typeobj.html#c.PyTypeObject.tp_vectorcall_offset
+    #if PY_MINOR_VERSION <= 7
     .tp_print = 0,
+    #else
+    .tp_vectorcall_offset = 0, 
+    #endif
     .tp_getattr = 0,
     .tp_setattr = 0,
     .tp_as_async = 0,
