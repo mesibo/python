@@ -73,7 +73,6 @@ from mesibo import Mesibo
 from mesibo import MesiboNotify
 ```
 
-
 ## API Usage
 ```python
 from mesibo import Mesibo
@@ -83,41 +82,38 @@ from mesibo import MesiboNotify
 #For example, when you receive a message, receive an incoming call etc
 #MesiboNotify is a class of listeners that can be invoked to get real-time notification of events  
 
-
-
 class MesiboListener(MesiboNotify):
 
-    def __init__(self):
-        pass
-
     def on_connectionstatus(self, status):
-        print("===>on_connectionstatus: " + str(status))
-        return 1
+        """A status = 1 means the listener successfully connected to the Mesibo server
+        """
+        print(f"## Connection status: {status}")
+        return 0
+
+    def on_message(self, msg_params, data, datalen):
+        """Invoked on receiving a new message or reading database messages
+        """
+        print(f"## Received message from {msg_params['peer']}: {data} of len {datalen}")
+        print(msg_params)
+        print("Message: ", data[: datalen].decode('utf-8'))
+        return 0
+
+    def on_messagestatus(self, msg_params):
+        """Invoked when the status of an outgoing or sent message is changed. Statuses can be
+        sent, delivered, or read
+        """
+        print(f"## Outgoing msg. To: {msg_params['peer']}, Status: {msg_params['status']}")
+        return 0
 
 
-    def on_message(self, message_params,data):
-        #invoked on receiving a new message or reading database messages
-        print("===>on_message: from " + str(message_params['peer'])) 
-        print(data) 
-        return 1
-
-    def on_messagestatus(self, message_params):
-        #Invoked when the status of outgoing or sent message is changed
-        print("===>on_messagestatus: from " + str(message_params['peer'])+ 
-        " status "+ str(message_params['status']))
-        return 1
-        
-
-def send_text_message(to,message):
-        #api is the Mesibo Python API instance. 
-        #Make sure the instance is initialised before you call API functions
-        p = {}
-        p['peer'] = to
-        p['expiry'] = 3600
-        data = message
-        api.send_message(p,api.random(),data)
-
-
+def send_text_message(to, message):
+    #pymesibo is the Mesibo Python API instance. 
+    #Make sure the instance is initialised before you call API functions
+    p = {}
+    p['peer'] = to
+    data = message
+    pymesibo.send_message(p, pymesibo.random(), data)
+```
 
 #Initialisation code
 
@@ -126,18 +122,18 @@ pymesibo = Mesibo()
 
 #Set Listener
 pymesibo.set_listener(MesiboListener)  
-
 #Set your AUTH_TOKEN obtained from the Mesibo Console
 pymesibo.set_accesstoken("your_auth_token") 
-
 #Set APP_ID which you used to create AUTH_TOKEN
 pymesibo.set_appname("your_app_id")
-
 #Set the name of the database
 pymesibo.set_database("mesibo.db") 
 
 #Start mesibo
 pymesibo.start() 
+
+#Wait for the application to exit, Press Ctrl+Z to exit
+pymesibo.wait()
 
 ```
 
@@ -148,8 +144,6 @@ For documentation and tutorials [refer](https://mesibo.com/documentation/)
 This is a simple tutorial for sending/recieving a text-message using Mesibo python API.
 Before you begin please go through [Get Started](https://mesibo.com/documentation/get-started/) guide.
 Read the  [Preparation Guide](https://mesibo.com/documentation/tutorials/first-app/) and [Anatomy of a Mesibo Application](https://mesibo.com/documentation/tutorials/first-app/anatomy/)
-
-
 
 ### Import Mesibo and initialise it
 
@@ -174,18 +168,18 @@ pymesibo = Mesibo()
 
 #Set Listener
 pymesibo.set_listener(MesiboListener)  
-
 #Set your AUTH_TOKEN obtained from the Mesibo Console
 pymesibo.set_accesstoken(AUTH_TOKEN) 
-
 #Set APP_ID which you used to create AUTH_TOKEN
 pymesibo.set_appname(APP_ID)
-
 #Set the name of the database
 pymesibo.set_database("mesibo.db") 
 
 #Start mesibo
 pymesibo.start() 
+
+#Wait for the application to exit, Press Ctrl+Z to exit
+pymesibo.wait()
 
 ```
 Mesibo invokes various Listeners for various events.
@@ -194,30 +188,29 @@ MesiboNotify is a class of listeners that can be invoked to get real-time notifi
 
 ```python
 
-
 class MesiboListener(MesiboNotify):
 
-    def __init__(self):
-        pass
-
     def on_connectionstatus(self, status):
-        print("===>on_connectionstatus: " + str(status))
-        return 1
+        """A status = 1 means the listener successfully connected to the Mesibo server
+        """
+        print(f"## Connection status: {status}")
+        return 0
 
+    def on_message(self, msg_params, data, datalen):
+        """Invoked on receiving a new message or reading database messages
+        """
+        print(f"## Received message from {msg_params['peer']}: {data} of len {datalen}")
+        print(msg_params)
+        print("Message: ", data[: datalen].decode('utf-8'))
+        return 0
 
-    def on_message(self, message_params,data):
-        #invoked on receiving a new message or reading database messages
-        print("===>on_message: from " + str(message_params['peer'])) 
-        print(data) 
-        return 1
-
-    def on_messagestatus(self, message_params):
-        #Invoked when the status of outgoing or sent message is changed
-        print("===>on_messagestatus: from " + str(message_params['peer'])+ 
-        " status "+ str(message_params['status']))
-        return 1
-
-
+    def on_messagestatus(self, msg_params):
+        """Invoked when the status of an outgoing or sent message is changed. Statuses can be
+        sent, delivered, or read
+        """
+        print(f"## Outgoing msg. To: {msg_params['peer']}, Status: {msg_params['status']}")
+        return 0
+                   
 ```
 ### Testing your Python application
 
@@ -245,14 +238,13 @@ To send messages,you can use `send_message` real-time API for which you will nee
 
 Invoke the following function from your code to send a message
 ```python
-def send_text_message(to,message):
-        #api is the Mesibo Python API instance. 
-	#Make sure the instance is initialised before you call API functions
-        p = {}
-        p['peer'] = to
-        data = message
-        api.send_message(p,api.random(),data)
-
+def send_text_message(to, message):
+    #pymesibo is the Mesibo Python API instance. 
+    #Make sure the instance is initialised before you call API functions
+    p = {}
+    p['peer'] = to
+    data = message
+    pymesibo.send_message(p, pymesibo.random(), data)
 ```
 That’s it! Try it out by creating two users and send messages to each other by using the above function.
 

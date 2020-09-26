@@ -12,7 +12,7 @@ module=Extension("mesibo.mesibo",
         )
 
 setup( name="mesibo",
-        version="0.0.3",
+        version="0.0.4",
         classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
