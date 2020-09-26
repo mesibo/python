@@ -3,11 +3,11 @@
 This repo contains the source code for Mesibo Real-Time Python API. Mesibo Python library is still **under-development**. However, it is completely functional. 
 
 ### What is Mesibo?
-Mesibo offers everything to make your app real-time and scalable for your first billion users and the next. It's modular, lightweight and easy to integrate.
+Mesibo offers everything to make your app real-time and scalable for your first billion users and the next. It's modular, lightweight, and easy to integrate.
 
-Mesibo supports almost all popular platforms and languages for you to quickly build your applications. Whether you are developing mobile apps (Android, iOS, Java, Objective-C, C++), web apps (Javascript), integrating with backend (Linux, MacOS, Windows, Python, C++) or creating cool devices using Raspberry Pi, Mesibo has APIs for you.
+Mesibo supports almost all popular platforms and languages for you to quickly build your applications. Whether you are developing mobile apps (Android, iOS, Java, Objective-C, C++), web apps (Javascript), integrating with backend (Linux, macOS, Windows, Python, C++), or creating cool devices using Raspberry Pi, Mesibo has APIs for you.
 
-Mesibo's high performance C++ and Python libraries enable you to interface your chat clients with various scientific computing and machine learning systems on your backend like TensorFlow, Matlab, Octave, NumPy etc to create a powerful chat experience.
+Mesibo's high-performance C++ and Python libraries enable you to interface your chat clients with various scientific computing and machine learning systems on your backend like TensorFlow, Matlab, Octave, NumPy, etc to create a powerful chat experience.
 
 
 - **Website:** https://mesibo.com
@@ -20,11 +20,11 @@ Mesibo's high performance C++ and Python libraries enable you to interface your 
 - Raspberry Pi
 
 ## Requirements
-Mesibo Python API is an entirely open-source real-time library which can be built and installed from source. Building Mesibo Python Package requires the following software installed:
+Mesibo Python API is an entirely open-source real-time library that can be built and installed from source. Building the Mesibo Python Package requires the following software installed:
 
 **1. Python 3 (3.4.x or newer preferred) / Python 2 (2.7.x or newer preferred)**
 
-Install the development packages for Python : `python` and `python-dev`
+Install the development packages for Python: `python` and `python-dev`
 Make sure that the Python package `setuptools` is installed before continuing. 
 
 #### Debian/Ubuntu
@@ -38,7 +38,7 @@ sudo yum install libffi-devel python python-devel
 
 **2. Compiler**
 
-Mesibo Python Library uses [Mesibo C/C++ SDK](https://mesibo.com/documentation/install/linux/). Hence, it has to compiled before installing the package. GCC 4.x (and later)are recommended. 
+Mesibo Python Library uses [Mesibo C/C++ SDK](https://mesibo.com/documentation/install/linux/). Hence, it has to be compiled before installing the package. GCC 4.x (and later)are recommended. 
 
 
 ## Installing Mesibo Python Library
@@ -67,7 +67,7 @@ If you prefer not to install it automatically, you can perform an in-place build
 python setup.py build_ext --inplace
 ```
 
-Once you have installed Mesibo Python Library sucessfully, you should be able to import Mesibo module in Python as follows:
+Once you have installed Mesibo Python Library successfully, you should be able to import the Mesibo module in Python as follows:
 ```python
 from mesibo import Mesibo
 from mesibo import MesiboNotify
@@ -79,7 +79,7 @@ from mesibo import Mesibo
 from mesibo import MesiboNotify
 
 #Mesibo invokes various Listeners for various events.
-#For example, when you receive a message, receive an incoming call etc
+#For example, when you receive a message, receive an incoming call, etc
 #MesiboNotify is a class of listeners that can be invoked to get real-time notification of events  
 
 class MesiboListener(MesiboNotify):
@@ -113,7 +113,6 @@ def send_text_message(to, message):
     p['peer'] = to
     data = message
     pymesibo.send_message(p, pymesibo.random(), data)
-```
 
 #Initialisation code
 
@@ -141,11 +140,11 @@ For documentation and tutorials [refer](https://mesibo.com/documentation/)
 
 ## Let's get Real-Time!
 
-This is a simple tutorial for sending/recieving a text-message using Mesibo python API.
+This is a simple tutorial for sending/receiving a text-message using Mesibo python API.
 Before you begin please go through [Get Started](https://mesibo.com/documentation/get-started/) guide.
 Read the  [Preparation Guide](https://mesibo.com/documentation/tutorials/first-app/) and [Anatomy of a Mesibo Application](https://mesibo.com/documentation/tutorials/first-app/anatomy/)
 
-### Import Mesibo and initialise it
+### Import Mesibo and initialize it
 
 From `mesibo` Python Package import the function class `Mesibo` and the callback class `MesiboNotify`
 
@@ -183,7 +182,7 @@ pymesibo.wait()
 
 ```
 Mesibo invokes various Listeners for various events.
-For example, when you receive a message, receive an incoming call,etc.
+For example, when you receive a message, receive an incoming call, etc.
 MesiboNotify is a class of listeners that can be invoked to get real-time notification of events. You can derive your `MesiboListener` class from the base class `MesiboNotify` like below 
 
 ```python
@@ -234,7 +233,7 @@ Enter 1000 (or anything) in `From` field, check `Create This User` checkbox, typ
 
 ### Sending Messages
 
-To send messages,you can use `send_message` real-time API for which you will need destination user, message id and message itself.
+To send messages, you can use `send_message` real-time API for which you will need destination user, message-id, and the message itself.
 
 Invoke the following function from your code to send a message
 ```python
@@ -246,6 +245,22 @@ def send_text_message(to, message):
     data = message
     pymesibo.send_message(p, pymesibo.random(), data)
 ```
+### Creating a chatbot
+For example, you may be creating a chatbot and want to send an automated reply back to the user as follows:
+```python
+    def on_message(self, msg_params, data, datalen):
+        """Invoked on receiving a new message or reading database messages
+        """
+        print(f"## Received message from {msg_params['peer']}: {data} of len {datalen}")
+        print("Message: ", data[: datalen].decode('utf-8'))
+        
+        send_text_message(msg_params['peer'], "I got your message! Please wait..");
+        #Now you can process the message(data) and send an appropriate response later
+        
+	return 0
+```
+
+
 That’s it! Try it out by creating two users and send messages to each other by using the above function.
 
 
