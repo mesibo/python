@@ -27,17 +27,17 @@ from mesibo import MesiboListener
 
 class PyMesiboListener(MesiboListener):
 
-    def mesibo_on_connectionstatus(self, status):
+    def Mesibo_OnConnectionStatus(self, status):
         """A status = 1 means the listener 
         successfully connected to the mesibo server
         """
-        print("## Connection status: ", status)
+        print("## Mesibo_OnConnectionStatus: ", status)
         return 0
 
-    def mesibo_on_message(self, msg_params, data):
+    def Mesibo_OnMessage(self, msg_params, data):
         """Invoked on receiving a new message 
         or reading database messages
-        data: python byte array 
+        data: bytearray 
         """
         message = None
         try:
@@ -47,65 +47,98 @@ class PyMesiboListener(MesiboListener):
         except:
             pass
         
-        print("\n ## on_message: ", msg_params)
+        print("\n ## Mesibo_OnMessage: ", msg_params)
         print("## Received Data: \n", data)
         # handle: integer, bytes, etc
 
         return 0
 
-    def mesibo_on_messagestatus(self, msg_params):
+    def Mesibo_OnMessageStatus(self, msg_params):
         """Invoked when the status 
         of an outgoing or sent message is changed. msg_params.status can be
         sent, delivered, or read
         """
-        print("## on_messagestatus", msg_params)
+        print("## Mesibo_OnMessageStatus", msg_params)
         return 0
 
-def send_one_to_one_message(mesibo_api, destination_address, message):
+    def Mesibo_OnActivity(self, msg_params, activity):
+        print("## on_activity", msg_params, activity)
+        return 0
+    
+    def Mesibo_OnFile(self, msg_params, file_params):
+        print("## on_file", msg_params, file_params)
+        return 0 
+
+def send_text_message(api, address, message):
     params = Mesibo.MessageParams()
-    params.peer = destination_address
+    params.peer = address
     params.flag = Mesibo.FLAG_READRECEIPT | Mesibo.FLAG_DELIVERYRECEIPT
     mid = api.random()
-    mesibo_api.send_message(params, mid, message)
+    api.sendMessage(params, mid, message)
 
 # Get access token and app id by creating a mesibo user
 # See https://mesibo.com/documentation/tutorials/get-started/
-ACCESS_TOKEN = "xxxxx"
-APP_ID = "xxxxx"
+ACCESS_TOKEN = "xxxx"
+APP_ID = "xxxx"
 
 # Create a Mesibo Instance
 api = Mesibo()
 
 # Set Listener
 listener = PyMesiboListener()
-api.add_listener(listener)
+api.addListener(listener)
 
 # Set your AUTH_TOKEN obtained while creating the user 
-if(Mesibo.RESULT_FAIL == api.set_accesstoken(ACCESS_TOKEN)):
+if(Mesibo.RESULT_FAIL == api.setAccessToken(ACCESS_TOKEN)):
     print("===> Invalid ACCESS_TOKEN: ", ACCESS_TOKEN)
     print("See https://mesibo.com/documentation/tutorials/get-started/")
     exit(1) 
 
 # Set APP_ID which you used to create AUTH_TOKEN
-api.set_appname(APP_ID)
+api.setAppName(APP_ID)
 
 # Set the name of the database
-api.set_database("mesibo.db")
+api.setDatabase("mesibo.db")
 
 # Start mesibo, 
 api.start()
 
-send_one_to_one_message(api, "xxx", "Hello from Python!")
+send_text_message(api, "456", "Hello from Python!")
 
-# Wait for the application to exit
+#Wait for the application to exit
 api.wait()
 ```
 
-## Installation
+## Installing using pip
 See [requirements](https://mesibo.com/documentation/install/python/#requirements) to learn about installation requirements before you continue.
 ```
 $ sudo python -m pip install mesibo
 ```
+
+## Installing from source
+Alternatively, you can build and install the package by downloading the source code from the GitHub repo.
+
+Download the source files from [mesibo Python repo on GitHub](https://github.com/mesibo/python)
+```
+git clone https://github.com/mesibo/python.git
+```
+You will find the following directory structure:
+```
+|-- examples 
+|-- setup.py
+|-- src
+```
+
+To build the mesibo Python package from source
+```
+sudo python setup.py build 
+```
+
+To build and install the mesibo Python package from source
+```
+sudo python setup.py install
+```
+
 ## Tutorial
 [Write your First mesibo Enabled Application - Python](https://mesibo.com/documentation/tutorials/get-started/python)
 

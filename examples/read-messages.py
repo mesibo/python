@@ -1,26 +1,24 @@
 #!/usr/bin/python3
  
-# first-app.py
+#reading-messages.py
 
 from mesibo import Mesibo
 from mesibo import MesiboListener
 
 class MesiboReadListener(MesiboListener):
-    def mesibo_on_message(self, msg_params, data):
+    def Mesibo_OnMessage(self, msg_params, data):
         """Invoked on receiving a new message 
         or reading database messages
         data: python byte array 
         """
-        print('---------')
-        print("## on_message: ", msg_params)
-        print("## Data: ", data)
-        print('---------')
+        print("## Mesibo_OnMessage: ", msg_params)
+        print("## data: ", data)
         return 0
 
 api = Mesibo()
 
 # Set the name of the database
-if(Mesibo.RESULT_FAIL == api.set_database("mesibo-241095.db")):
+if(Mesibo.RESULT_FAIL == api.setDatabase("mesibo-241095.db")):
     print("Unable to set database")
     exit(1)
 
@@ -31,15 +29,15 @@ listener = MesiboReadListener()
 
 # Create Read Session to read messages 
 # from user with address "678" 
-rs = api.ReadDbSession("678", 0, None, listener);
-rs.enable_read_receipt(True)
+rs = api.ReadDbSession("456", 0, None, listener);
+rs.enableReadReceipt(True)
 count = rs.read(10)
 print("read returned ", count)
 
 # Create Read Session in summary mode
 # Summmay mode = read the last message from each user 
 rs = api.ReadDbSession(None, 0, None, listener)
-rs.enable_summary(True)
+rs.enableSummary(True)
 count = rs.read(10)
 print("read returned ", count)
 # Create Read Session to read summary

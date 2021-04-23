@@ -5,8 +5,17 @@ import sys
 import os
 import warnings
 
-package_dir = os.path.dirname(os.path.realpath(__file__))
-clib_dir = os.path.join(package_dir, 'clib')
+PYMESIBO_LIB = "libpymesibo"
+MESIBO_LIB = "libmesibo"
+CLIB_DIR = "clib"
+
+MESIBO_LISTENER_ON_MESSAGE = "Mesibo_OnMessage"
+MESIBO_LISTENER_ON_FILE = "Mesibo_OnFile"
+MESIBO_LISTENER_ON_MESSAGE_STATUS = "Mesibo_OnMessageStatus"
+MESIBO_LISTENER_ON_CONNECTION_STATUS = "Mesibo_OnConnectionStatus"
+MESIBO_LISTENER_ON_ACTIVITY = "Mesibo_OnActivity"
+MESIBO_LISTENER_ON_SYNC = "Mesibo_OnSync"
+
 
 def get_platform_lib(libname):
     
@@ -27,77 +36,90 @@ def get_platform_lib(libname):
     platform_tag = platform_tag + "_" + machine.lower()
     return libname + platform_tag + ".so"
 
-PYMESIBO_LIB = get_platform_lib("libpymesibo")
-MESIBO_LIB = get_platform_lib("libmesibo")
+def get_full_path_to_lib(lib_name):
+    package_dir = os.path.dirname(os.path.realpath(__file__))
+    clib_dir = os.path.join(package_dir, CLIB_DIR)
+    platform_lib = get_platform_lib(lib_name)
+    lib_path = os.path.join(clib_dir, platform_lib)
+    return lib_path
 
-PYMESIBO_LIB_PATH = os.path.join(clib_dir, PYMESIBO_LIB)
-MESIBO_LIB_PATH = os.path.join(clib_dir, MESIBO_LIB)
 
 # Use MesiboListener on the client end
-# _MesiboNotify then calls client MesiboListener
-# For internal use only
+# Internally  _MesiboNotify then calls client MesiboListener
 class _MesiboNotify:
-    def __init__(self):
-        self._listener = None 
+    def __init__(self, api):
+        self._api = api
+        self._listener = None
     
     def _set_client_listener(self, listener):
         self._listener = listener
 
     def notify_on_connectionstatus(self, status):
-        return self._listener.mesibo_on_connectionstatus(status) 
+        mesibo_on_connectionstatus = getattr(self._listener, MESIBO_LISTENER_ON_CONNECTION_STATUS, None)
+        if(callable(mesibo_on_connectionstatus)):
+            return mesibo_on_connectionstatus(status)
+        
+        return 0
 
     def notify_on_message(self, params_dict, peer, data, datalen):
         msg_params = Mesibo.MessageParams()
-        msg_params.init_from_dict(params_dict)
+        msg_params._init_from_dict(params_dict)
         msg_params.peer = peer
         msg_params.datalen = datalen    
-       
-        mesibo_on_message = getattr(self._listener, "mesibo_on_message", None)
-        if(callable(mesibo_on_message)):
-            return self._listener.mesibo_on_message(msg_params, data)
+        
+        if(Mesibo.ORIGIN_REALTIME != msg_params.origin 
+                and self._api._read_session 
+                and self._api._read_session._listener):
+            mesibo_on_message = getattr(self._api._read_session._listener, MESIBO_LISTENER_ON_MESSAGE, None)
+            if(callable(mesibo_on_message)):
+                return mesibo_on_message(msg_params, data)
+        else:
+            mesibo_on_message = getattr(self._listener, MESIBO_LISTENER_ON_MESSAGE, None)
+            if(callable(mesibo_on_message)):
+                return mesibo_on_message(msg_params, data)
         
         return 0
 
     def notify_on_messagestatus(self, params_dict, peer):
         msg_params = Mesibo.MessageParams()
-        msg_params.init_from_dict(params_dict)
+        msg_params._init_from_dict(params_dict)
         msg_params.peer = peer
 
-        mesibo_on_messagestatus = getattr(self._listener, "mesibo_on_messagestatus", None)
+        mesibo_on_messagestatus = getattr(self._listener, MESIBO_LISTENER_ON_MESSAGE_STATUS, None)
         if(callable(mesibo_on_messagestatus)):
-            return self._listener.mesibo_on_messagestatus(msg_params)
+            return mesibo_on_messagestatus(msg_params)
         
         return 0
 
     def notify_on_activity(self, params_dict, peer, activity):
         msg_params = Mesibo.MessageParams()
-        msg_params.init_from_dict(params_dict)
+        msg_params._init_from_dict(params_dict)
         msg_params.peer = peer
 
-        mesibo_on_activity = getattr(self._listener, "mesibo_on_activity", None)
+        mesibo_on_activity = getattr(self._listener, MESIBO_LISTENER_ON_ACTIVITY, None)
         if(callable(mesibo_on_activity)):
-            return self._listener.mesibo_on_activity(msg_params, activity)
+            return mesibo_on_activity(msg_params, activity)
         
         return 0
     
     def notify_on_sync(self, rs, count, flags):
-        mesibo_on_sync = getattr(self._listener, "mesibo_on_sync", None)
+        mesibo_on_sync = getattr(self._listener, MESIBO_LISTENER_ON_SYNC, None)
         if(callable(mesibo_on_sync)):
-            return self._listener.mesibo_on_sync(count)
+            return mesibo_on_sync(count)
 
         return 0
 
     def notify_on_file(self, params_dict, peer, file_dict):
         msg_params = Mesibo.MessageParams()
-        msg_params.init_from_dict(params_dict)
+        msg_params._init_from_dict(params_dict)
         msg_params.peer = peer
 
         file_params = Mesibo.FileInfo()
-        file_params.init_from_dict(file_dict)
+        file_params._init_from_dict(file_dict)
 
-        mesibo_on_file = getattr(self._listener, "mesibo_on_file", None)
+        mesibo_on_file = getattr(self._listener, MESIBO_LISTENER_ON_FILE, None)
         if(callable(mesibo_on_file)):
-            return self._listener.mesibo_on_file(msg_params, file_params)
+            return mesibo_on_file(msg_params, file_params)
         
         return 0
 
@@ -106,7 +128,7 @@ class ReadDbSession:
         self.peer = peer 
         self.groupid = groupid 
         self.query = query 
-        self.listener = listener
+        self._listener = listener
         self.count = 0
         self.flag = 0
         self.mesibo_instance = mesibo_instance
@@ -114,13 +136,19 @@ class ReadDbSession:
         self.mesibo_instance._cpy.mesibo_set_readsession.restype = ctypes.c_void_p
         
         # TBD
+        # If addListener is never called and you are only passing read listner, 
+        # then we need to call read listener
         if(not self.mesibo_instance._get_listner()):
-            self.mesibo_instance.add_listener(listener)
+            self.mesibo_instance.addListener(listener)
+        
+        # If both addListener is called and read listener is set, 
+        # then we check in mesibo_on_message and call read listener
+        self.mesibo_instance._read_session = self
 
         self.c_read_session = self.mesibo_instance._cpy.mesibo_set_readsession(self.flag, _get_raw_string(self.peer), 
                 self.groupid, _get_raw_string(self.query))
 
-    def enable_read_receipt(self, enable):
+    def enableReadReceipt(self, enable):
         if(enable):
             self.flag = self.flag | Mesibo.READFLAG_READRECEIPT
         else:
@@ -129,7 +157,7 @@ class ReadDbSession:
         self.c_read_session = self.mesibo_instance._cpy.mesibo_set_readsession(self.flag, _get_raw_string(self.peer), 
                 self.groupid, _get_raw_string(self.query))
 
-    def enable_summary(self, enable):
+    def enableSummary(self, enable):
         if(enable):
             self.flag = self.flag | Mesibo.READFLAG_SUMMARY
         else:
@@ -144,7 +172,9 @@ class ReadDbSession:
     def sync(self, count):
         return self.mesibo_instance._cpy.mesibo_sync(ctypes.c_void_p(self.c_read_session), count)
 
-        
+    def stop(self):
+        self.mesibo_instance._read_session = None
+
 class Mesibo:
     FLAG_DELIVERYRECEIPT = 0x1
     FLAG_READRECEIPT = 0x2
@@ -161,10 +191,17 @@ class Mesibo:
     ACTIVITY_LEFT = 11;
 
     READFLAG_READRECEIPT = 1;
-    READFLAG_SENDLAST    = 2;
-    READFLAG_FIFO        = 4;
-    READFLAG_SUMMARY    = 0x10;
-    
+    READFLAG_SENDLAST = 2;
+    READFLAG_FIFO = 4;
+    READFLAG_SUMMARY = 0x10;
+   
+    ORIGIN_REALTIME = 0
+    ORIGIN_DBMESSAGE = 1
+    ORIGIN_DBSUMMARY = 2
+    ORIGIN_DBPENDING = 3
+    ORIGIN_FILTER = 4
+    ORIGIN_MESSAGESTATUS = 5
+
     RESULT_OK = 0
     RESULT_FAIL = -1
 
@@ -179,14 +216,16 @@ class Mesibo:
             self.when = 0
             self.status = -1
             self.datalen = 0
+            self.origin = None
 
         def __str__(self):
             return "<" + "type: "+ str(self.type) + " expiry: "+ str(self.expiry) + \
                     " groupid: "+ str(self.groupid) + " id: "+ str(self.id) + \
                     " flag: "+ str(self.flag) + " peer: "+ str(self.peer) + \
-                    " when: "+ str(self.when) + " status: "+ str(self.status) + ">" 
+                    " when: "+ str(self.when) + " status: "+ str(self.status) + " origin: " + str(self.origin) + ">" 
 
-        def init_from_dict(self, params_dict):
+        #For internal use only
+        def _init_from_dict(self, params_dict):
             self.id = params_dict["id"] 
             self.type = params_dict["type"] 
             self.flag = params_dict["flag"] 
@@ -194,6 +233,7 @@ class Mesibo:
             self.status = params_dict["status"]
             self.when = params_dict["when"] 
             self.groupid = params_dict["groupid"]
+            self.origin = params_dict["origin"]
  
     class FileInfo:
         def __init__(self):
@@ -204,7 +244,8 @@ class Mesibo:
             self.title = "" 
             self.message = ""
              
-        def init_from_dict(self, file_dict):
+        #For internal use only
+        def _init_from_dict(self, file_dict):
             self.type = file_dict["filetype"] 
             self.size = file_dict["filesize"] 
             self.url = file_dict["fileurl"] 
@@ -219,16 +260,19 @@ class Mesibo:
 
     
     def __init__(self):
+        _pymesibo_lib = get_full_path_to_lib(PYMESIBO_LIB)
+        _mesibo_lib = get_full_path_to_lib(MESIBO_LIB)
         try:
-            self._cpy = ctypes.cdll.LoadLibrary(PYMESIBO_LIB_PATH)
+            self._cpy = ctypes.cdll.LoadLibrary(_pymesibo_lib)
         except:
-            print('Unable to load: '+ PYMESIBO_LIB_PATH + ' Platform not supported. Contact us at https://mesibo.com/support')
+            print('Unable to load: '+ _pymesibo_lib + ' Platform not supported. Contact us at https://mesibo.com/support')
             raise
 
-        if(-1 == self._cpy.mesibo_init(_get_raw_string(MESIBO_LIB_PATH))):
-            raise OSError('Unable to load: '+ MESIBO_LIB_PATH + ' Platform not supported. Contact us at https://mesibo.com/support')
+        if(-1 == self._cpy.mesibo_init(_get_raw_string(_mesibo_lib))):
+            raise OSError('Unable to load: '+ _mesibo_lib + ' Platform not supported. Contact us at https://mesibo.com/support')
         
-        self._listner = None
+        self._listener = None
+        self._read_session = None
         self._set_cpu_info()
 
 
@@ -241,24 +285,25 @@ class Mesibo:
         self._cpy.mesibo_set_cpu(_get_raw_string(machine), core_count)
 
     
-    def set_accesstoken(self, token):
+    def setAccessToken(self, token):
         return self._cpy.mesibo_set_accesstoken(_get_raw_string(token))
     
-    def set_appname(self, appid):
+    def setAppName(self, appid):
         return self._cpy.mesibo_set_appname(_get_raw_string(appid))
     
-    def set_database(self, db_name):
+    def setDatabase(self, db_name):
         return self._cpy.mesibo_set_database(_get_raw_string(db_name))
     
-    def add_listener(self, client_listener):
+    def addListener(self, client_listener):
         prototype = ctypes.PYFUNCTYPE(
                 ctypes.c_char_p,
                 ctypes.py_object
                 )
 
-        py_notify = _MesiboNotify()
-        py_notify._set_client_listener(client_listener)
-        self._listner = client_listener
+        py_notify = _MesiboNotify(self)
+        if(client_listener):
+            py_notify._set_client_listener(client_listener)
+            self._listener = client_listener
 
         mesibo_add_listener = prototype(('mesibo_add_listener', self._cpy))
         # py_notify will call client_listener internally
@@ -267,7 +312,7 @@ class Mesibo:
     
     # For internal use only
     def _get_listner(self):
-        return self._listner
+        return self._listener
 
     def start(self):
         return self._cpy.mesibo_start()
@@ -284,10 +329,10 @@ class Mesibo:
     def timestamp(self):
         return self._cpy.mesibo_timestamp()
     
-    def set_secure_connection(self, enable):
+    def setSecureConnection(self, enable):
         self._cpy.mesibo_set_secure_connection(int(enable))
 
-    def send_message(self, params, mid, message):
+    def sendMessage(self, params, mid, message):
         print("send_message", params, params.peer, mid, message)
         if(params.expiry == None):
             params.expiry = self.PY_EXPIRY_DEFAULT
@@ -311,31 +356,31 @@ class Mesibo:
                 params.groupid, params.flag, _get_raw_string(params.peer), 
                 mid, ctypes.py_object(data_bytes))
     
-    def send_activity(self, params, mid, activity, interval):
+    def sendActivity(self, params, mid, activity, interval):
         
         params.id = mid
 
-        print("send_activity", params, mid, activity);
+        print("sendActivity", params, mid, activity);
         return self._cpy.mesibo_send_activity(params.type, params.expiry,
                 params.groupid, params.flag, _get_raw_string(params.peer),
                 mid, activity, interval)
 
-    def send_file(self, params, mid, fileinfo):
+    def sendFile(self, params, mid, fileinfo):
         
         params.id = mid
         if(params.expiry == None):
             params.expiry = self.PY_EXPIRY_DEFAULT
 
-        print("send_file", params, mid, fileinfo);
+        print("sendFile", params, mid, fileinfo);
         return self._cpy.mesibo_send_file(params.type, params.expiry,
                 params.groupid, params.flag, _get_raw_string(params.peer), mid,
                 fileinfo.filetype, fileinfo.filesize, _get_raw_string(fileinfo.fileurl), fileinfo.thumbnail, _get_raw_string(fileinfo.title), _get_raw_string(fileinfo.message))
 
 
-    def delete_message(self, mid): 
+    def deleteMessage(self, mid): 
         return self._cpy.mesibo_delete_message(mid, None, 0);
         
-    def delete_messages(self, mid_list, count, del_type): 
+    def deleteMessages(self, mid_list, count, del_type): 
         return self._cpy.mesibo_delete_messages(ctypes.py_object(mid_list), count, del_type);
         
 def _get_raw_string(s):

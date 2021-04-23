@@ -10,7 +10,7 @@ def read(fname):
 
 setuptools.setup(
     name="mesibo", 
-    version="1.2.1",
+    version="1.2.2",
     author="Mesibo",
     author_email="support@mesibo.com",
     description="mesibo is a real-time communication platform with APIs for messaging and calls",
