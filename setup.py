@@ -1,28 +1,38 @@
-from setuptools import setup,Extension
+import setuptools
 import os
 
-#Install Mesibo C/C++ library
-os.system("curl -fsSL https://raw.githubusercontent.com/mesibo/libmesibo/master/install.sh | sudo bash -")
+# Utility function to read the README file.
+# Used for the long_description.  It's nice, because now 1) we have a top level
+# README file and 2) it's easier to type in the README file than to put a raw
+# string in below ...
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-module=Extension("mesibo.mesibo",
-        sources=["src/bind.cpp","src/notify.cpp","src/core.cpp","src/globals.cpp","src/utils.cpp"],
-
-        include_dirs = ['include'],
-        libraries = ['mesibo']
-        )
-
-setup( name="mesibo",
-        version="0.0.4",
-        classifiers=[
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Developers',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3 :: 2',
-        'Programming Language :: Python :: Implementation :: CPython',
-        "Operating System :: Unix"
-        ],
-        description="Mesibo Real-Time Python Library. Documentation: https://mesibo.com/documentation/",
-        ext_modules=[module],
-        py_modules = ['mesibo.mesibonotify']
-        )
-
+setuptools.setup(
+    name="mesibo", 
+    version="1.2.1",
+    author="Mesibo",
+    author_email="support@mesibo.com",
+    description="mesibo is a real-time communication platform with APIs for messaging and calls",
+    long_description= read('README.md'),
+    long_description_content_type="text/markdown",
+    url="https://github.com/mesibo/python",
+    project_urls={
+        "Bug Tracker": "https://github.com/mesibo/python/issues",
+    },
+    classifiers=[
+        "Development Status :: 5 - Production/Stable", 
+        "Intended Audience :: Developers", 
+        "Operating System :: Unix",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Topic :: Software Development :: Libraries :: Python Modules"
+    ],
+    package_dir={"": "src"},
+    packages=setuptools.find_packages(where="src"),
+    package_data={
+        "mesibo": ["clib/*.so"],
+    },
+    python_requires=">=2.7",
+)
