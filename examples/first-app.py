@@ -8,7 +8,7 @@
 # Create a user and Obtain the token and app id for the user and set it
 # Run the script 
 #
-# python first-app.py
+# $ python3 first-app.py
 #
 # Send a message from console to the user. It should be received and printed by your python script
 # Use Ctrl+Z or pkill to stop the script
@@ -55,11 +55,11 @@ class PyMesiboListener(MesiboListener):
         return 0
 
     def Mesibo_OnActivity(self, msg_params, activity):
-        print("## on_activity", msg_params, activity)
+        print("## Mesibo_OnActivity", msg_params, activity)
         return 0
     
-    def Mesibo_OnFile(self, msg_params, file_params):
-        print("## on_file", msg_params, file_params)
+    def Mesibo_OnRichMessage(self, msg_params, message):
+        print("## Mesibo_OnRichMessage", msg_params, message)
         return 0 
 
 def send_text_message(api, address, message):
@@ -71,8 +71,8 @@ def send_text_message(api, address, message):
 
 # Get access token and app id by creating a mesibo user
 # See https://mesibo.com/documentation/tutorials/get-started/
-ACCESS_TOKEN = "xxxx"
-APP_ID = "xxxx"
+ACCESS_TOKEN = "<use your user token>"
+APP_ID = "com.mesibo.python"
 
 # Create a Mesibo Instance
 api = Mesibo()

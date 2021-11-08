@@ -47,5 +47,5 @@ class MesiboListener:
     def Mesibo_OnSync(self, count):
         return 0
     
-    def Mesibo_OnFile(self, msg_params, file_params):
+    def Mesibo_OnRichMessage(self, msg_params, message):
         return 0 

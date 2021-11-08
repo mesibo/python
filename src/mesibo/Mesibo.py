@@ -10,7 +10,7 @@ MESIBO_LIB = "libmesibo"
 CLIB_DIR = "clib"
 
 MESIBO_LISTENER_ON_MESSAGE = "Mesibo_OnMessage"
-MESIBO_LISTENER_ON_FILE = "Mesibo_OnFile"
+MESIBO_LISTENER_ON_FILE = "Mesibo_OnRichMessage"
 MESIBO_LISTENER_ON_MESSAGE_STATUS = "Mesibo_OnMessageStatus"
 MESIBO_LISTENER_ON_CONNECTION_STATUS = "Mesibo_OnConnectionStatus"
 MESIBO_LISTENER_ON_ACTIVITY = "Mesibo_OnActivity"
@@ -114,7 +114,7 @@ class _MesiboNotify:
         msg_params._init_from_dict(params_dict)
         msg_params.peer = peer
 
-        file_params = Mesibo.FileInfo()
+        file_params = Mesibo.MesiboRichMessage()
         file_params._init_from_dict(file_dict)
 
         mesibo_on_file = getattr(self._listener, MESIBO_LISTENER_ON_FILE, None)
@@ -145,26 +145,14 @@ class ReadDbSession:
         # then we check in mesibo_on_message and call read listener
         self.mesibo_instance._read_session = self
 
-        self.c_read_session = self.mesibo_instance._cpy.mesibo_set_readsession(self.flag, _get_raw_string(self.peer), 
+        self.c_read_session = self.mesibo_instance._cpy.mesibo_set_readsession(_get_raw_string(self.peer), 
                 self.groupid, _get_raw_string(self.query))
 
     def enableReadReceipt(self, enable):
-        if(enable):
-            self.flag = self.flag | Mesibo.READFLAG_READRECEIPT
-        else:
-            self.flag = self.flag & ~ Mesibo.READFLAG_READRECEIPT
-       
-        self.c_read_session = self.mesibo_instance._cpy.mesibo_set_readsession(self.flag, _get_raw_string(self.peer), 
-                self.groupid, _get_raw_string(self.query))
+        self._cpy.mesibo_instance._cpy.mesibo_rs_readreceipt(ctypes.c_void_p(self.c_read_session), enable)
 
     def enableSummary(self, enable):
-        if(enable):
-            self.flag = self.flag | Mesibo.READFLAG_SUMMARY
-        else:
-            self.flag = self.flag & ~ Mesibo.READFLAG_SUMMARY
-       
-        self.c_read_session = self.mesibo_instance._cpy.mesibo_set_readsession(self.flag, _get_raw_string(self.peer), 
-                self.groupid, _get_raw_string(self.query))
+        self._cpy.mesibo_instance._cpy.mesibo_rs_summary(ctypes.c_void_p(self.c_read_session), enable)
 
     def read(self, count):
         return self.mesibo_instance._cpy.mesibo_read(ctypes.c_void_p(self.c_read_session), count) 
@@ -173,6 +161,7 @@ class ReadDbSession:
         return self.mesibo_instance._cpy.mesibo_sync(ctypes.c_void_p(self.c_read_session), count)
 
     def stop(self):
+        self._cpy.mesibo_instance._cpy.mesibo_rs_stop(ctypes.c_void_p(self.c_read_session))
         self.mesibo_instance._read_session = None
 
 class Mesibo:
@@ -210,52 +199,50 @@ class Mesibo:
             self.type = 0
             self.expiry = None 
             self.groupid = 0
-            self.id = 0
-            self.flag = 0
+            self.mid = 0
+            self.flags = 0
             self.peer = None
-            self.when = 0
+            self.ts = 0
             self.status = -1
             self.datalen = 0
             self.origin = None
 
         def __str__(self):
             return "<" + "type: "+ str(self.type) + " expiry: "+ str(self.expiry) + \
-                    " groupid: "+ str(self.groupid) + " id: "+ str(self.id) + \
-                    " flag: "+ str(self.flag) + " peer: "+ str(self.peer) + \
-                    " when: "+ str(self.when) + " status: "+ str(self.status) + " origin: " + str(self.origin) + ">" 
+                    " groupid: "+ str(self.groupid) + " id: "+ str(self.mid) + \
+                    " flag: "+ str(self.flags) + " peer: "+ str(self.peer) + \
+                    " when: "+ str(self.ts) + " status: "+ str(self.status) + " origin: " + str(self.origin) + ">" 
 
         #For internal use only
         def _init_from_dict(self, params_dict):
-            self.id = params_dict["id"] 
+            self.mid = params_dict["mid"] 
             self.type = params_dict["type"] 
-            self.flag = params_dict["flag"] 
+            self.flags = params_dict["flags"] 
             self.expiry = params_dict["expiry"] 
             self.status = params_dict["status"]
-            self.when = params_dict["when"] 
+            self.ts = params_dict["ts"] 
             self.groupid = params_dict["groupid"]
             self.origin = params_dict["origin"]
  
-    class FileInfo:
+    class MesiboRichMessage:
         def __init__(self):
             self.filetype = 0
             self.filesize = 0 
-            self.fileurl = 0
-            self.thumbnail = 0
+            self.fileurl = ""
             self.title = "" 
             self.message = ""
              
         #For internal use only
         def _init_from_dict(self, file_dict):
-            self.type = file_dict["filetype"] 
-            self.size = file_dict["filesize"] 
-            self.url = file_dict["fileurl"] 
-            self.tn = file_dict["thumbnail"]
+            self.filetype = file_dict["filetype"] 
+            self.filesize = file_dict["filesize"] 
+            self.fileurl = file_dict["fileurl"] 
             self.title = file_dict["title"] 
             self.message = file_dict["message"]
  
         def __str__(self):
             return "<" + "filetype: "+ str(self.filetype) + " filesize: "+ str(self.filesize) + \
-                    " fileurl: "+ str(self.fileurl) + " thumbnail: "+ str(self.thumbnail) + \
+                    " fileurl: "+ str(self.fileurl) + \
                     " title: "+ str(self.title) + " message: "+ str(self.message) + ">" 
 
     
@@ -273,7 +260,7 @@ class Mesibo:
         
         self._listener = None
         self._read_session = None
-        self._set_cpu_info()
+        #self._set_cpu_info()
 
 
     def ReadDbSession(self, peer, groupid, query, listener):

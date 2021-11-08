@@ -28,7 +28,7 @@ from mesibo import MesiboListener
 class PyMesiboListener(MesiboListener):
 
     def Mesibo_OnConnectionStatus(self, status):
-        """A status = 1 means the listener 
+        """A status = 1 means the app 
         successfully connected to the mesibo server
         """
         print("## Mesibo_OnConnectionStatus: ", status)
@@ -62,11 +62,11 @@ class PyMesiboListener(MesiboListener):
         return 0
 
     def Mesibo_OnActivity(self, msg_params, activity):
-        print("## on_activity", msg_params, activity)
+        print("## Mesibo_OnActivity", msg_params, activity)
         return 0
     
-    def Mesibo_OnFile(self, msg_params, file_params):
-        print("## on_file", msg_params, file_params)
+    def Mesibo_OnRichMessage(self, msg_params, message):
+        print("## Mesibo_OnRichMessage", msg_params, message)
         return 0 
 
 def send_text_message(api, address, message):
