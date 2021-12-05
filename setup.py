@@ -8,9 +8,11 @@ import os
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+exec(open('src/mesibo/version.py').read())
+
 setuptools.setup(
     name="mesibo", 
-    version="1.8.1",
+    version=__mesibo_version__,
     author="Mesibo",
     author_email="support@mesibo.com",
     description="mesibo is a real-time communication platform with APIs for messaging and calls",

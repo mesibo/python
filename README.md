@@ -4,18 +4,19 @@ mesibo offers everything to make your app real-time and scalable. It's modular, 
 
 mesibo supports almost all popular platforms and languages for you to quickly build your applications. Whether you are developing mobile apps (Android, iOS, Java, Objective-C, C++), web apps (Javascript), integrating with backend (Linux, macOS, Windows, Python, C++), or creating cool devices using Raspberry Pi, mesibo has APIs for you.
 
-mesibo's high-performance Python library enables you to interface your chat clients with various scientific computing and machine learning systems on your backend like TensorFlow, Matlab, Octave, NumPy, etc to create a powerful chat experience.
+mesibo's high-performance Python library enables you to interface your chat clients with various scientific computing and machine learning systems on your backend like TensorFlow, Matlab, Octave, NumPy, etc to create a powerful chat experience and analysis.
 
 - **Website:** https://mesibo.com
 - **Documentation:** https://mesibo.com/documentation/
 - **Tutorials:** https://mesibo.com/documentation/tutorials/get-started
 
 ### Supported Platforms
-Mesibo Python Package is still under-development and supports the following platforms. However, it is completely functional.
+Mesibo Python Package supports the following platforms.
+
 - CentOS / RedHat 7.x or above
 - Debian / Ubuntu
-- Mac OS (In Progress)
-- Raspberry Pi (In Progress)
+- Mac OS - both x86_64 and arm64 (M1) versions
+- Raspberry Pi 3 and 4
 
 ## Example
 Below are some examples of typical usage. For more examples, see the [examples](https://github.com/mesibo/python/tree/master/examples) directory on the GitHub repo.
@@ -111,6 +112,7 @@ api.wait()
 
 ## Installing using pip
 See [requirements](https://mesibo.com/documentation/install/python/#requirements) to learn about installation requirements before you continue.
+
 ```
 $ sudo python -m pip install mesibo
 ```
