@@ -77,6 +77,10 @@ APP_ID = "com.mesibo.python"
 # Create a Mesibo Instance
 api = Mesibo()
 
+# Enable or disable End-to-end-encryption
+e2ee = api.e2ee();
+e2ee.enable(1)
+
 # Set Listener
 listener = PyMesiboListener()
 api.addListener(listener)

@@ -129,6 +129,55 @@ class _MesiboNotify:
         
         return 0
 
+class MesiboEndToEndEncryption:
+    def __init__(self, mesibo_instance):
+        self.mesibo_instance = mesibo_instance
+        self.mesibo_instance._cpy.mesibo_e2ee_getfp.argtypes = (ctypes.c_char_p, ctypes.c_int)
+        # override the default return type which is int
+        self.mesibo_instance._cpy.mesibo_e2ee_getfp.restype = ctypes.c_char_p
+        self.mesibo_instance._cpy.mesibo_e2ee_getcertinfo.argtypes = (ctypes.c_char_p, ctypes.c_int)
+        self.mesibo_instance._cpy.mesibo_e2ee_getcertinfo.restype = ctypes.c_char_p
+        
+    def enable(self, enable):
+        self.mesibo_instance._cpy.mesibo_e2ee_enable(enable)
+
+    def setLevel(self, level):
+        self.mesibo_instance._cpy.mesibo_e2ee_setlevel(level)
+
+    def setCiphers(self, supported, preferred):
+        self.mesibo_instance._cpy.mesibo_e2ee_setciphers(supported, preferred)
+
+    def setAuthenticationTaglen(self, len):
+        self.mesibo_instance._cpy.mesibo_e2ee_settaglen(len)
+
+    def setAuthenticationData(self, address, aad):
+        return self.mesibo_instance._cpy.mesibo_e2ee_setaad(_get_raw_string(address), _get_raw_string(aad))
+
+    def getPublicCertificate(self, filename):
+        return self.mesibo_instance._cpy.mesibo_e2ee_getpubcert(_get_raw_string(filename))
+
+    def setPrivateCertificate(self, filename):
+        return self.mesibo_instance._cpy.mesibo_e2ee_setprivcert(_get_raw_string(filename))
+
+    def setPeerCertificate(self, address, filename):
+        return self.mesibo_instance._cpy.mesibo_e2ee_setpeercert(_get_raw_string(address), _get_raw_string(filename))
+
+    def setPassword(self, address, password):
+        return self.mesibo_instance._cpy.mesibo_e2ee_setpass(_get_raw_string(address), _get_raw_string(password))
+    
+    def getFingerprint(self, address):
+        return self.mesibo_instance._cpy.mesibo_e2ee_getfp(_get_raw_string(address), 0).decode("utf-8")
+    
+    def getUserFingerprint(self, address):
+        return self.mesibo_instance._cpy.mesibo_e2ee_getfp(_get_raw_string(address), 1).decode("utf-8")
+    
+    def getPeerCertificateOrg(self, address):
+        return self.mesibo_instance._cpy.mesibo_e2ee_getcertinfo(_get_raw_string(address), 0).decode("utf-8")
+    
+    def getPeerCertificateCommonName(self, address):
+        return self.mesibo_instance._cpy.mesibo_e2ee_getcertinfo(_get_raw_string(address), 1).decode("utf-8")
+    
+
 class ReadDbSession:
     def __init__(self, mesibo_instance, peer, groupid, query, listener):
         self.peer = peer 
@@ -266,10 +315,18 @@ class Mesibo:
         if(-1 == self._cpy.mesibo_init(_get_raw_string(_mesibo_lib), _get_raw_string(__mesibo_version__))):
             raise OSError('Unable to load: '+ _mesibo_lib + ' Platform not supported. Contact us at https://mesibo.com/support')
         
+        # TBD, initialize all function arg types
+        self._cpy.mesibo_e2ee_getfp.argtypes = (ctypes.c_char_p, ctypes.c_int)
+        # override the default return type which is int
+        self._cpy.mesibo_e2ee_getfp.restype = ctypes.c_char_p
+        
         self._listener = None
         self._read_session = None
+        self._e2ee = MesiboEndToEndEncryption(self)
         #self._set_cpu_info()
 
+    def e2ee(self):
+        return self._e2ee
 
     def ReadDbSession(self, peer, groupid, query, listener):
         return ReadDbSession(self, peer, groupid, query, listener)
@@ -288,6 +345,12 @@ class Mesibo:
     
     def setDatabase(self, db_name):
         return self._cpy.mesibo_set_database(_get_raw_string(db_name))
+    
+    def backupDatabase(self, path):
+        return self._cpy.mesibo_backup_database(_get_raw_string(path), 1, 0)
+    
+    def restoreDatabase(self, path):
+        return self._cpy.mesibo_backup_database(_get_raw_string(path), 0, 0)
     
     def addListener(self, client_listener):
         prototype = ctypes.PYFUNCTYPE(
