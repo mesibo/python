@@ -3,7 +3,7 @@ class MesiboListener:
     def __init__(self):
         pass
 
-    def Mesibo_OnConnectionStatus(self, status):
+    def Mesibo_onConnectionStatus(self, status):
         """
         Invoked when the connection status is changed. 
         It is also invoked when the token is about to be expired.
@@ -17,35 +17,42 @@ class MesiboListener:
 
         return 0
 
-    def Mesibo_OnMessage(self, message_params, data):
+    def Mesibo_onMessage(self, message):
         """
         Invoked on receiving a new message or reading database messages 
         
         Parameters
         ----------
-        message_params: Message Parameters
-        data : Message Data Bytes 
+        message: Message Object
         """
 
         return 0
 
-    def Mesibo_OnMessageStatus(self, message_params):
+    def Mesibo_onMessageUpdate(self, message):
+        """
+        Invoked on receiving an update for existing message 
+        
+        Parameters
+        ----------
+        message: Message Object
+        """
+
+        return 0
+
+    def Mesibo_onMessageStatus(self, message):
         """
         Invoked when the status of outgoing or sent message is changed
 
         Parameters
         ----------
-        message_params : Message Parameters
-
+        message: Message Object
         """
 
         return 0
 
-    def Mesibo_OnActivity(self, msg_params, activity):
+    def Mesibo_onPresence(self, msg):
         return 0
     
-    def Mesibo_OnSync(self, count):
+    def Mesibo_onSync(self, count):
         return 0
     
-    def Mesibo_OnRichMessage(self, msg_params, message):
-        return 0 

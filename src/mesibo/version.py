@@ -1,1 +1,1 @@
-__mesibo_version__ = '1.9.0'
+__mesibo_version__ = '2.0.0'
