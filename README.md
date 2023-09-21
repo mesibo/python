@@ -13,10 +13,13 @@ mesibo's high-performance Python library enables you to interface your chat clie
 ### Supported Platforms
 Mesibo Python Package supports the following platforms.
 
-- CentOS / RedHat 7.x or above
+- RedHat 7.x or above (also, Rocky Linux, CentOS)
 - Debian / Ubuntu
 - Mac OS - both x86_64 and arm64 (M1) versions
-- Raspberry Pi 3 and 4
+- Microsoft Windows 10 and above (64-bit)
+- Raspberry Pi 3 and 4 (64-bit)
+
+Note that, Mesibo is no longer supporting or offering 32-bit versions.
 
 ## Example
 Below are some examples of typical usage. For more examples, see the [examples](https://github.com/mesibo/python/tree/master/examples) directory on the GitHub repo.
@@ -24,17 +27,18 @@ Below are some examples of typical usage. For more examples, see the [examples](
 ### Sending and Receiving Messages
 ```python
 #!/usr/bin/python3
-from mesibo import Mesibo
-from mesibo import MesiboMessage
+import mesibo
 from mesibo import MesiboListener
 
 class PyMesiboListener(MesiboListener):
 
     def Mesibo_onConnectionStatus(self, status):
-        """A status = 1 means the listener 
+        """A status = mesibo.MESIBO_STATUS_ONLINE means the listener 
         successfully connected to the mesibo server
         """
         print("## Mesibo_onConnectionStatus: ", status)
+        if(status == mesibo.MESIBO_STATUS_AUTHFAIL):
+            exit(1) 
         return 0
 
     def Mesibo_onMessage(self, msg):
@@ -43,15 +47,19 @@ class PyMesiboListener(MesiboListener):
         msg: Message Object 
         """
         try:
-            # try to decode string
-            message = msg.message.decode(encoding="utf-8", errors="strict") 
-            print("\n ## Received message:", message)
+            if(msg.isRichMessage()):
+                print("\n ## message:", msg.message)
+                print("\n ## title:", msg.title)
+                print("\n ## subtitle:", msg.subtitle)
+                print("\n ## path:", msg.file.path)
+                print("\n ## url:", msg.file.url)
+                #print("\n ## tn:", msg.file.thumbnail)
+            else:    
+                print("\n ## Received data:", msg.data)
         except:
             pass
         
         print("\n ## Mesibo_onMessage: ", msg)
-        # handle: integer, bytes, etc
-
         return 0
 
     def Mesibo_onMessageUpdate(self, msg):
@@ -71,12 +79,6 @@ class PyMesiboListener(MesiboListener):
         print("## Mesibo_onPresence", msg)
         return 0 
 
-def send_text_message(api, address, message):
-    params = Mesibo.MessageParams()
-    params.peer = address
-    params.flag = Mesibo.FLAG_READRECEIPT | Mesibo.FLAG_DELIVERYRECEIPT
-    mid = api.random()
-    api.sendMessage(params, mid, message)
 
 # Get access token and app id by creating a mesibo user
 # See https://mesibo.com/documentation/tutorials/get-started/
@@ -84,7 +86,13 @@ ACCESS_TOKEN = "<use your user token>"
 APP_ID = "com.mesibo.python"
 
 # Create a Mesibo Instance
-api = Mesibo()
+api = mesibo.getInstance()
+
+# if you are sending or receiving binary/signalling data, set the format. By default, mesibo
+# auto detects and sets to Unicode string or bytes[]
+# You can override it by setting mesibo.MESIBO_READAS_BYTES or mesibo.MESIBO_READAS_UNICODE
+# mesibo.readDataAs(mesibo.MESIBO_READAS_AUTO)
+
 
 # Enable or disable End-to-end-encryption
 e2ee = api.e2ee();
@@ -95,7 +103,7 @@ listener = PyMesiboListener()
 api.addListener(listener)
 
 # Set your AUTH_TOKEN obtained while creating the user 
-if(Mesibo.RESULT_FAIL == api.setAccessToken(ACCESS_TOKEN)):
+if(mesibo.MESIBO_RESULT_FAIL == api.setAccessToken(ACCESS_TOKEN)):
     print("===> Invalid ACCESS_TOKEN: ", ACCESS_TOKEN)
     print("See https://mesibo.com/documentation/tutorials/get-started/")
     exit(1) 
@@ -104,13 +112,13 @@ if(Mesibo.RESULT_FAIL == api.setAccessToken(ACCESS_TOKEN)):
 api.setAppName(APP_ID)
 
 # Set the name of the database
-api.setDatabase("mesibo.db")
+api.setDatabase("mesibo", 0)
 
 # Start mesibo, 
 api.start()
 
 input("Press Enter to to send a message...\n")
-msg = MesiboMessage("destination")
+msg = api.newMessage("destination")
 msg.title = "Hello"
 msg.message = "Hello message"
 #msg.setContent("pic1.jpg")
@@ -130,30 +138,6 @@ See [requirements](https://mesibo.com/documentation/install/python/#requirements
 
 ```
 $ sudo python -m pip install mesibo
-```
-
-## Installing from source
-Alternatively, you can build and install the package by downloading the source code from the GitHub repo.
-
-Download the source files from [mesibo Python repo on GitHub](https://github.com/mesibo/python)
-```
-git clone https://github.com/mesibo/python.git
-```
-You will find the following directory structure:
-```
-|-- examples 
-|-- setup.py
-|-- src
-```
-
-To build the mesibo Python package from source
-```
-sudo python setup.py build 
-```
-
-To build and install the mesibo Python package from source
-```
-sudo python setup.py install
 ```
 
 ## Tutorial

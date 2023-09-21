@@ -100,7 +100,7 @@ api.setDatabase("mesibo.db")
 # Start mesibo, 
 api.start()
 
-input("Press Enter to to send a message...\n")
+input("Press Enter to send a message...\n")
 msg = MesiboMessage("destination")
 msg.title = "Hello"
 msg.message = "Hello message"
